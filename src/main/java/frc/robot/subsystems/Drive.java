@@ -50,11 +50,15 @@ public class Drive extends SubsystemBase {
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
 
+  private ChassisSpeeds driveChassisSpeeds;
+
   private final PigeonIMU m_pigeon;
 
   double storedYaw;
   double yaw;
   double yawCorrection;
+
+  boolean isHighGear;
 
   SwerveDriveOdometry m_odometry;
 
@@ -85,6 +89,8 @@ public class Drive extends SubsystemBase {
 
     m_odometry = new SwerveDriveOdometry(Constants.kDriveKinematics,
         Rotation2d.fromDegrees(getPigeon().getFusedHeading()));
+
+    isHighGear = true;
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -104,7 +110,24 @@ public class Drive extends SubsystemBase {
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
-    SwerveModuleState[] states = Constants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+
+    driveChassisSpeeds = chassisSpeeds;
+
+    if (isHighGear()) {
+      driveChassisSpeeds.vxMetersPerSecond *= Constants.MAX_VELOCITY_METERS_PER_SECOND;
+      driveChassisSpeeds.vyMetersPerSecond *= Constants.MAX_VELOCITY_METERS_PER_SECOND;
+
+      driveChassisSpeeds.omegaRadiansPerSecond *= Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+    }
+
+    else {
+      driveChassisSpeeds.vxMetersPerSecond *= (Constants.MAX_VELOCITY_METERS_PER_SECOND - 1);
+      driveChassisSpeeds.vyMetersPerSecond *= (Constants.MAX_VELOCITY_METERS_PER_SECOND - 1);
+
+      driveChassisSpeeds.omegaRadiansPerSecond *= (Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND - 1);
+    }
+
+    SwerveModuleState[] states = Constants.kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds);
     SwerveDriveKinematics.normalizeWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
     m_frontLeftModule.set(
@@ -133,23 +156,23 @@ public class Drive extends SubsystemBase {
         yawCorrection = calcYawStraight(storedYaw, yaw, Constants.kPHeading);
       }
     }
-    drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.getDriver().getLeftYAxis(),
-        RobotContainer.getDriver().getLeftXAxis(), RobotContainer.getDriver().getRightXAxis(), getGyroscopeRotation()));
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.interpolatedLeftYAxis(),
+        RobotContainer.interpolatedLeftXAxis(), RobotContainer.interpolatedRightXAxis(), getGyroscopeRotation()));
   }
 
   public void driveManualRobotCentric() {
-    drive(new ChassisSpeeds(RobotContainer.getDriver().getLeftXAxis(), RobotContainer.getDriver().getLeftYAxis(),
-        RobotContainer.getDriver().getRightXAxis()));
+    drive(new ChassisSpeeds(RobotContainer.interpolatedLeftYAxis(), RobotContainer.interpolatedLeftXAxis(),
+        RobotContainer.interpolatedRightXAxis()));
   }
 
   public void trackTarget(boolean lockX, boolean lockY, boolean lockTheta) {
     if (lockX && lockY && !lockTheta) {
       drive(ChassisSpeeds.fromFieldRelativeSpeeds(ClosedLoopFeedback.calculateHomingOutputTargetY(),
-          ClosedLoopFeedback.calculateHomingOutputTargetX(), RobotContainer.getDriver().getRightXAxis(),
+          ClosedLoopFeedback.calculateHomingOutputTargetX(), RobotContainer.interpolatedRightXAxis(),
           getGyroscopeRotation()));
     }
     if (!lockX && lockY && lockTheta) {
-      drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.getDriver().getLeftYAxis(),
+      drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.interpolatedLeftYAxis(),
           ClosedLoopFeedback.calculateHomingOutputTargetX(), ClosedLoopFeedback.calculateHomingOutputTargetX(),
           getGyroscopeRotation()));
     }
@@ -219,6 +242,14 @@ public class Drive extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(pose, getRotation2d());
+  }
+
+  public boolean isHighGear() {
+    return isHighGear;
+  }
+
+  public void setHighGear(boolean gear) {
+    isHighGear = gear;
   }
 
   @Override

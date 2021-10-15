@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
  */
 public final class Constants {
 
-    public static final double MAX_VOLTAGE = 8.0;
+    public static final double MAX_VOLTAGE = 10.0;
     public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 / 8.16 * 0.1016 * Math.PI;
 
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 1.0; // FIXME Measure and set trackwidth
@@ -90,8 +90,8 @@ public final class Constants {
             // Assumes the encoders are on a 1:1 reduction with the module shaft.
             (2 * Math.PI) / (double) kEncoderCPR;
 
-    public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kMinSpeedMetersPerSecond = 3;
+    public static final double kMaxSpeedMetersPerSecond = 2.5;
+    public static final double kMinSpeedMetersPerSecond = 2.5;
 
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMinAccelerationMetersPerSecondSquared = 3;

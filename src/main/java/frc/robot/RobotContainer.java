@@ -71,6 +71,45 @@ public class RobotContainer {
     return false;
   }
 
+  public static boolean isCeiling(double axis) {
+    if (axis >= 0.9)
+      return true;
+    return false;
+  }
+
+  public static double interpolatedLeftYAxis() {
+    if (RobotContainer.inDeadZone(getDriver().getLeftYAxis()))
+      return 0.0;
+    if (RobotContainer.isCeiling(getDriver().getLeftYAxis()))
+      return 1.0;
+    if (Drive.getInstance().isHighGear())
+      return Math.sqrt(getDriver().getLeftYAxis());
+    else 
+      return getDriver().getLeftYAxis() * getDriver().getLeftYAxis();
+  }
+
+  public static double interpolatedLeftXAxis() {
+    if (RobotContainer.inDeadZone(getDriver().getLeftXAxis()))
+      return 0.0;
+    if (RobotContainer.isCeiling(getDriver().getLeftXAxis()))
+      return 1.0;
+    if (Drive.getInstance().isHighGear())
+      return Math.sqrt(getDriver().getLeftXAxis());
+    else 
+      return getDriver().getLeftXAxis() * getDriver().getLeftXAxis();
+  }
+
+  public static double interpolatedRightXAxis() {
+    if (RobotContainer.inDeadZone(getDriver().getRightXAxis()))
+      return 0.0;
+    if (RobotContainer.isCeiling(getDriver().getRightXAxis()))
+      return 1.0;
+    if (Drive.getInstance().isHighGear())
+      return Math.sqrt(getDriver().getRightXAxis());
+    else 
+      return getDriver().getRightXAxis() * getDriver().getRightXAxis();
+  }
+
   public static void outputTelemetry(String telemetry) {
     if (!telemetry.equals(null))
       System.out.println("System Telemetry :: " + telemetry);
