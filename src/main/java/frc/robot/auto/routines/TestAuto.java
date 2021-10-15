@@ -12,6 +12,9 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.auto.TrajectoryGenerator;
+import frc.robot.auto.commands.ResetOdometry;
+import frc.robot.auto.commands.StopTrajectory;
+import frc.robot.auto.commands.sequences.ResetRamsete;
 import frc.robot.subsystems.Drive;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -32,7 +35,8 @@ public class TestAuto extends SequentialCommandGroup {
             TrajectoryGenerator.getInstance().getThetaController(),
             RobotContainer.m_drive::setModuleStates,
             RobotContainer.m_drive
-            )
+            ),
+      new ResetRamsete()
     );
   }
 }

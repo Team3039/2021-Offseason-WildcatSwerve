@@ -16,74 +16,62 @@ import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.Constants;
 
 public class TrajectoryGenerator {
-    private static final TrajectoryGenerator instance = new TrajectoryGenerator();
+        private static final TrajectoryGenerator instance = new TrajectoryGenerator();
 
-    public static TrajectoryGenerator getInstance() {
-        return instance;
-    }
+        public static TrajectoryGenerator getInstance() {
+                return instance;
+        }
 
-    public ProfiledPIDController getThetaController() {
-        return thetaController;
-    }
+        Trajectory m_LastTrajectory;
 
-    TrajectoryConfig forwardConfigFast =
-        new TrajectoryConfig(
-                Constants.kMaxSpeedMetersPerSecond,
-                Constants.kMaxAccelerationMetersPerSecondSquared)
-            .setKinematics(Constants.kDriveKinematics)
-            .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics, Constants.kMaxSpeedMetersPerSecond))
-            .setReversed(false);
+        public Trajectory getLastTrajectory() {
+                return m_LastTrajectory;
+        }
 
-    TrajectoryConfig forwardConfigSlow =
-        new TrajectoryConfig(
-            Constants.kMinSpeedMetersPerSecond, 
-            Constants.kMinAccelerationMetersPerSecondSquared)
-            .setKinematics(Constants.kDriveKinematics)
-            .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics, Constants.kMaxSpeedMetersPerSecond))
-            .setReversed(false);
+        public ProfiledPIDController thetaController = new ProfiledPIDController(Constants.kPThetaController, 0, 0,
+                        Constants.kThetaControllerConstraints);
 
-    TrajectoryConfig reverseConfigFast =
-        new TrajectoryConfig(
-                Constants.kMaxSpeedMetersPerSecond,
-                Constants.kMaxAccelerationMetersPerSecondSquared)
-            .setKinematics(Constants.kDriveKinematics)
-            .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics, Constants.kMaxSpeedMetersPerSecond))
-            .setReversed(true);
+        public ProfiledPIDController getThetaController() {
+                return thetaController;
+        }
 
-    TrajectoryConfig reverseConfigSlow =
-        new TrajectoryConfig(
-                Constants.kMinSpeedMetersPerSecond, 
-                Constants.kMinAccelerationMetersPerSecondSquared)
-            .setKinematics(Constants.kDriveKinematics)
-            .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics, Constants.kMaxSpeedMetersPerSecond))
-            .setReversed(true);
+        TrajectoryConfig forwardConfigFast = new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,
+                        Constants.kMaxAccelerationMetersPerSecondSquared).setKinematics(Constants.kDriveKinematics)
+                                        .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics,
+                                                        Constants.kMaxSpeedMetersPerSecond))
+                                        .setReversed(false);
 
-    public ProfiledPIDController thetaController =
-        new ProfiledPIDController(
-            Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
+        TrajectoryConfig forwardConfigSlow = new TrajectoryConfig(Constants.kMinSpeedMetersPerSecond,
+                        Constants.kMinAccelerationMetersPerSecondSquared).setKinematics(Constants.kDriveKinematics)
+                                        .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics,
+                                                        Constants.kMaxSpeedMetersPerSecond))
+                                        .setReversed(false);
 
-    // Reset odometry to the starting pose of the trajectory.
-    // m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+        TrajectoryConfig reverseConfigFast = new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,
+                        Constants.kMaxAccelerationMetersPerSecondSquared).setKinematics(Constants.kDriveKinematics)
+                                        .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics,
+                                                        Constants.kMaxSpeedMetersPerSecond))
+                                        .setReversed(true);
 
-    public Trajectory getDriveStraight() {
-        return edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator.generateTrajectory(
-            new Pose2d(Units.inchesToMeters(0), Units.inchesToMeters(0), new Rotation2d()),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3, 0, new Rotation2d(Units.degreesToRadians(0))),
-            forwardConfigSlow
-            );
-    }
+        TrajectoryConfig reverseConfigSlow = new TrajectoryConfig(Constants.kMinSpeedMetersPerSecond,
+                        Constants.kMinAccelerationMetersPerSecondSquared).setKinematics(Constants.kDriveKinematics)
+                                        .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics,
+                                                        Constants.kMaxSpeedMetersPerSecond))
+                                        .setReversed(true);
 
-    public Trajectory getDriveStraightReversed() {
-        return edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator.generateTrajectory(
-            new Pose2d(Units.inchesToMeters(0), Units.inchesToMeters(0), new Rotation2d()),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3, 0, new Rotation2d(Units.degreesToRadians(0))),
-            reverseConfigSlow
-            );
-    }
+        public Trajectory getDriveStraight() {
+                m_LastTrajectory = edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator.generateTrajectory(
+                                new Pose2d(),
+                                List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+                                new Pose2d(3, 0, new Rotation2d(Units.degreesToRadians(0))), forwardConfigSlow);
+                return m_LastTrajectory;
+        }
+
+        public Trajectory getDriveStraightReversed() {
+                m_LastTrajectory = edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator.generateTrajectory(
+                                new Pose2d(),
+                                List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+                                new Pose2d(3, 0, new Rotation2d(Units.degreesToRadians(0))), reverseConfigSlow);
+                return m_LastTrajectory;
+        }
 }
