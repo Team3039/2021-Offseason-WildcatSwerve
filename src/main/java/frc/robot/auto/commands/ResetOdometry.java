@@ -21,7 +21,7 @@ public class ResetOdometry extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.outputTelemetry("Stopping Trajectory");
+    RobotContainer.outputTelemetry("Resetting Odometry");
     Drive.getInstance().resetOdometry(pose2d);
   }
 
@@ -33,7 +33,7 @@ public class ResetOdometry extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.outputTelemetry("Stopping Trajectory");
+    RobotContainer.outputTelemetry("Reset Odometry");
   }
 
   // Returns true when the command should end.
