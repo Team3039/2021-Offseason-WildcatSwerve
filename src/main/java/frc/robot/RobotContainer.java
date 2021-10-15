@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.commands.ToggleFieldRelative;
+import frc.robot.commands.ZeroGyroscope;
 import frc.robot.controllers.PS4Gamepad;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.Drive;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,33 +22,14 @@ import frc.robot.subsystems.DrivetrainSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  public final static Drive m_drive = new Drive();
 
-  private final PS4Gamepad m_controller = new PS4Gamepad(0);
+  public final static PS4Gamepad m_driver = new PS4Gamepad(0);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    m_drivetrainSubsystem.setDefaultCommand(new FunctionalCommand(
-            () -> { // Do nothing on initialize
-            },
-            () -> m_drivetrainSubsystem.drive(
-                    ChassisSpeeds.fromFieldRelativeSpeeds(
-                            m_controller.getLeftYAxis(),
-                            m_controller.getLeftXAxis(),
-                            m_controller.getRightXAxis(),
-                            m_drivetrainSubsystem.getGyroscopeRotation()
-                    )
-            ),
-            interrupted -> {
-              // Stop the drivetrain
-              m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
-            },
-            () -> false, // Command never finishes
-            m_drivetrainSubsystem
-    ));
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -61,12 +44,11 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
     
-    Button driverPadButton = m_controller.getButtonPad();
+    Button driverPadButton = m_driver.getButtonPad();
+    driverPadButton.whenPressed(new ZeroGyroscope());
 
-    driverPadButton.whenPressed(m_drivetrainSubsystem::zeroGyroscope);
-    // new Button(m_controller::getButtonPad)
-    //         // No requirements because we don't need to interrupt anything
-    //         .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+    Button driverL1 = m_driver.getL1();
+    driverL1.whenPressed(new ToggleFieldRelative());
   }
 
   /**
@@ -77,5 +59,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return new InstantCommand();
+  }
+
+  public static PS4Gamepad getDriver() {
+    return m_driver;
   }
 }
