@@ -5,10 +5,11 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
- * Contains functions for use with the Playstation 4 controller.
- * Credit to these guys
+ * Contains functions for use with the Playstation 4 controller. Credit to these
+ * guys
+ * 
  * @author Joshua Lewis joshlewi14@gmail.com
- *  @author Thomas Floyd tefloyd1215@att.net and
+ * @author Thomas Floyd tefloyd1215@att.net and
  */
 public class PS4Gamepad extends Joystick {
 	// Gamepad axis ports
@@ -16,7 +17,7 @@ public class PS4Gamepad extends Joystick {
 	private static final int AXIS_LEFT_Y = 1;
 	private static final int AXIS_RIGHT_X = 2;
 	private static final int AXIS_RIGHT_Y = 5;
-	//private static final int AXIS_BUMPER = 4;
+	// private static final int AXIS_BUMPER = 4;
 	private static final int AXIS_DPAD = 5;
 
 	// Gamepad buttons
@@ -24,7 +25,7 @@ public class PS4Gamepad extends Joystick {
 	public static final int BUTTON_Square = 1;
 	public static final int BUTTON_Circle = 3;
 	public static final int BUTTON_Triangle = 4;
-	private static final int BUTTON_L1 = 5;	
+	private static final int BUTTON_L1 = 5;
 	private static final int BUTTON_R1 = 6;
 	private static final int BUTTON_L2 = 7;
 	private static final int BUTTON_R2 = 8;
@@ -35,14 +36,14 @@ public class PS4Gamepad extends Joystick {
 	private static final int BUTTON_START = 13;
 	private static final int BUTTON_PAD = 14;
 
-	public int DPAD_UP 			= 0;
-	public int DPAD_UP_RIGHT 	= 45;
-	public int DPAD_RIGHT 		= 90;
+	public int DPAD_UP = 0;
+	public int DPAD_UP_RIGHT = 45;
+	public int DPAD_RIGHT = 90;
 	public int DPAD_DOWN_RIGHT = 135;
-	public int DPAD_DOWN 		= 180;
-	public int DPAD_DOWN_LEFT 	= 225;
-	public int DPAD_LEFT 		= 270;
-	public int DPAD_UP_LEFT		= 315;
+	public int DPAD_DOWN = 180;
+	public int DPAD_DOWN_LEFT = 225;
+	public int DPAD_LEFT = 270;
+	public int DPAD_UP_LEFT = 315;
 
 	/**
 	 * Constructor that creates a Joystick object.
@@ -105,9 +106,9 @@ public class PS4Gamepad extends Joystick {
 	 */
 	public boolean getButtonStateTriangle() {
 		return getRawButton(BUTTON_Triangle);
-	
+
 	}
-	
+
 	public boolean getButtonStatePad() {
 		return getRawButton(BUTTON_PAD);
 	}
@@ -143,7 +144,7 @@ public class PS4Gamepad extends Joystick {
 	public JoystickButton getButtonPad() {
 		return new JoystickButton(this, BUTTON_PAD);
 	}
-	
+
 	/**
 	 * Return the DPad axis positions.
 	 */
@@ -152,41 +153,46 @@ public class PS4Gamepad extends Joystick {
 	}
 
 	/**
-	 * DPad Left and Right only
-	 * WPILIB cannot access the vertical axis of the Playstation 4
+	 * DPad Left and Right only WPILIB cannot access the vertical axis of the
+	 * Playstation 4
 	 */
 
 	public Button getDPadUp() {
 		return new DPadTriggerButton(this, DPAD_UP);
 	}
+
 	public Button getDPadDown() {
 		return new DPadTriggerButton(this, DPAD_DOWN);
 	}
+
 	public Button getDPadLeft() {
 		return new DPadTriggerButton(this, DPAD_LEFT);
 	}
+
 	public Button getDPadRight() {
 		return new DPadTriggerButton(this, DPAD_RIGHT);
 	}
+
 	/**
-	/**
-	 * Gets the state of the Start button
+	 * /** Gets the state of the Start button
+	 * 
 	 * @return the state of the Start button
 	 */
-	public JoystickButton getOptionsButton(){
+	public JoystickButton getOptionsButton() {
 		return new JoystickButton(this, BUTTON_OPTIONS);
 	}
 
 	public JoystickButton getShareButton() {
 		return new JoystickButton(this, BUTTON_SHARE);
 	}
-	
+
 	public JoystickButton getStartButton() {
 		return new JoystickButton(this, BUTTON_START);
 	}
- 
+
 	/**
 	 * Gets the state of the left bumper
+	 * 
 	 * @return the state of the left bumper
 	 */
 	public JoystickButton getL1() {
@@ -195,6 +201,7 @@ public class PS4Gamepad extends Joystick {
 
 	/**
 	 * Gets the state of the right bumper
+	 * 
 	 * @return the state of the right bumper
 	 */
 	public JoystickButton getR1() {
@@ -203,6 +210,7 @@ public class PS4Gamepad extends Joystick {
 
 	/**
 	 * Gets the state of the left stick button
+	 * 
 	 * @return the state of the left stick button
 	 */
 	public JoystickButton getL3() {
@@ -211,19 +219,20 @@ public class PS4Gamepad extends Joystick {
 
 	/**
 	 * Gets the state of the right stick button
+	 * 
 	 * @return the state of the right stick button
 	 */
 	public JoystickButton getR3() {
 		return new JoystickButton(this, BUTTON_R3);
 	}
 
-
-	public JoystickButton getL2(){
+	public JoystickButton getL2() {
 		return new JoystickButton(this, BUTTON_L2);
 	}
 
 	/**
 	 * Gets the state of the right trigger
+	 * 
 	 * @return the state of the right trigger
 	 */
 	public JoystickButton getR2() {
@@ -235,23 +244,25 @@ public class PS4Gamepad extends Joystick {
 	}
 
 	// public Button getRightTrigger() {
-	// 	return new AxisTriggerButton(this, Mac.AXIS_RIGHT_TRIGGER, Constants.TRIGGER_TOLERANCE);
+	// return new AxisTriggerButton(this, Mac.AXIS_RIGHT_TRIGGER,
+	// Constants.TRIGGER_TOLERANCE);
 	// }
 	// public Button getLeftTrigger() {
-	// 	return new AxisTriggerButton(this, map.AXIS_LEFT_TRIGGER, Constant..TRIGGER_TOLERANCE);
+	// return new AxisTriggerButton(this, map.AXIS_LEFT_TRIGGER,
+	// Constant..TRIGGER_TOLERANCE);
 	// }
 }
 
 class DPadTriggerButton extends Button {
 
 	private int buttonAngle;
-	private PS4Gamepad  controller;
+	private PS4Gamepad controller;
 
 	public DPadTriggerButton(PS4Gamepad controller, int dPadButtonAngle) {
 		this.buttonAngle = dPadButtonAngle;
 		this.controller = controller;
 	}
-	
+
 	@Override
 	public boolean get() {
 		return controller.getDpadAngle() == buttonAngle;

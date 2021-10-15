@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.commands.SetHighGear;
 import frc.robot.commands.ToggleFieldRelative;
 import frc.robot.commands.ZeroGyroscope;
+import frc.robot.controllers.InterpolatedPS4Gamepad;
 import frc.robot.controllers.PS4Gamepad;
 import frc.robot.subsystems.Drive;
 
@@ -25,7 +27,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final static Drive m_drive = new Drive();
 
-  public final static PS4Gamepad m_driver = new PS4Gamepad(0);
+  public final static InterpolatedPS4Gamepad m_driver = new InterpolatedPS4Gamepad(0);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -43,12 +45,14 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
-
-    Button driverPadButton = m_driver.getButtonPad();
+    Button driverPadButton = getDriver().getButtonPad();
     driverPadButton.whenPressed(new ZeroGyroscope());
 
-    Button driverL1 = m_driver.getL1();
-    driverL1.whenPressed(new ToggleFieldRelative());
+    Button driverL1 = getDriver().getL1();
+    driverL1.toggleWhenPressed(new ToggleFieldRelative());
+
+    Button driverR1 = getDriver().getR1();
+    driverR1.toggleWhenPressed(new SetHighGear());
   }
 
   /**
@@ -61,7 +65,7 @@ public class RobotContainer {
     return new InstantCommand();
   }
 
-  public static PS4Gamepad getDriver() {
+  public static InterpolatedPS4Gamepad getDriver() {
     return m_driver;
   }
 
@@ -84,7 +88,7 @@ public class RobotContainer {
       return 1.0;
     if (Drive.getInstance().isHighGear())
       return Math.sqrt(getDriver().getLeftYAxis());
-    else 
+    else
       return getDriver().getLeftYAxis() * getDriver().getLeftYAxis();
   }
 
@@ -95,7 +99,7 @@ public class RobotContainer {
       return 1.0;
     if (Drive.getInstance().isHighGear())
       return Math.sqrt(getDriver().getLeftXAxis());
-    else 
+    else
       return getDriver().getLeftXAxis() * getDriver().getLeftXAxis();
   }
 
@@ -106,7 +110,7 @@ public class RobotContainer {
       return 1.0;
     if (Drive.getInstance().isHighGear())
       return Math.sqrt(getDriver().getRightXAxis());
-    else 
+    else
       return getDriver().getRightXAxis() * getDriver().getRightXAxis();
   }
 

@@ -27,7 +27,7 @@ public final class Constants {
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 1.0; // FIXME Measure and set trackwidth
     public static final double DRIVETRAIN_WHEELBASE_METERS = 1.0; // FIXME Measure and set wheelbase
 
-    public static final int DRIVETRAIN_PIGEON_ID = 0; // FIXME Set Pigeon ID
+    public static final int DRIVETRAIN_PIGEON_ID = 12; // FIXME Set Pigeon ID
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 0; // FIXME Set front left module drive motor ID
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 1; // FIXME Set front left module steer motor ID
@@ -73,9 +73,9 @@ public final class Constants {
     // TODO: The RobotPy Characterization Toolsuite provides a convenient tool for
     // obtaining these
     // TODO: values for your robot.
-    public static final double ksVolts = 1;
-    public static final double kvVoltSecondsPerMeter = 0.8;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.15;
+//     public static final double ksVolts = 1;
+//     public static final double kvVoltSecondsPerMeter = 0.8;
+//     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND
             / Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
@@ -93,8 +93,8 @@ public final class Constants {
     public static final double kMaxSpeedMetersPerSecond = 2.5;
     public static final double kMinSpeedMetersPerSecond = 2.5;
 
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-    public static final double kMinAccelerationMetersPerSecondSquared = 3;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 2.5;
+    public static final double kMinAccelerationMetersPerSecondSquared = 2.5;
 
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
