@@ -116,32 +116,16 @@ public class Drive extends SubsystemBase {
     if (isHighGear()) {
       driveChassisSpeeds.vxMetersPerSecond *= Constants.MAX_VELOCITY_METERS_PER_SECOND;
       driveChassisSpeeds.vyMetersPerSecond *= Constants.MAX_VELOCITY_METERS_PER_SECOND;
-
       driveChassisSpeeds.omegaRadiansPerSecond *= Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
     }
 
     else {
       driveChassisSpeeds.vxMetersPerSecond *= (Constants.MAX_VELOCITY_METERS_PER_SECOND - 1);
       driveChassisSpeeds.vyMetersPerSecond *= (Constants.MAX_VELOCITY_METERS_PER_SECOND - 1);
-
       driveChassisSpeeds.omegaRadiansPerSecond *= (Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND - 1);
     }
 
-    SwerveModuleState[] states = Constants.kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds);
-    SwerveDriveKinematics.normalizeWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
-
-    m_frontLeftModule.set(
-        states[0].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.MAX_VOLTAGE,
-        states[0].angle.getRadians());
-    m_frontRightModule.set(
-        states[1].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.MAX_VOLTAGE,
-        states[1].angle.getRadians());
-    m_backLeftModule.set(
-        states[2].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.MAX_VOLTAGE,
-        states[2].angle.getRadians());
-    m_backRightModule.set(
-        states[3].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.MAX_VOLTAGE,
-        states[3].angle.getRadians());
+    setModuleStates(states);
   }
 
   public void driveManualFieldCentric() {
@@ -157,10 +141,21 @@ public class Drive extends SubsystemBase {
       }
     }
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.interpolatedLeftYAxis(),
-        RobotContainer.interpolatedLeftXAxis(), RobotContainer.interpolatedRightXAxis(), getGyroscopeRotation()));
+        RobotContainer.interpolatedLeftXAxis(), RobotContainer.interpolatedRightXAxis() + yawCorrection, getGyroscopeRotation()));
   }
 
   public void driveManualRobotCentric() {
+    if (!RobotContainer.inDeadZone(RobotContainer.getDriver().getRightXAxis())) {
+      storedYaw = yaw;
+      yawCorrection = 0;
+    }
+
+    else {
+      if (Math.abs(RobotContainer.getDriver().getLeftYAxis()) > 0
+          || Math.abs(RobotContainer.getDriver().getLeftXAxis()) > 0) {
+        yawCorrection = calcYawStraight(storedYaw, yaw, Constants.kPHeading);
+      }
+    }
     drive(new ChassisSpeeds(RobotContainer.interpolatedLeftYAxis(), RobotContainer.interpolatedLeftXAxis(),
         RobotContainer.interpolatedRightXAxis()));
   }
@@ -181,7 +176,7 @@ public class Drive extends SubsystemBase {
   double calcYawStraight(double targetAngle, double currentAngle, double kP) {
     double errorAngle = (targetAngle - currentAngle) % 360;
     double correction = errorAngle * kP;
-    return correction;
+    return -1 * correction;
   }
 
   public synchronized DriveControlMode getControlMode() {
@@ -256,8 +251,6 @@ public class Drive extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     yaw = m_pigeon.getFusedHeading();
-    storedYaw = m_pigeon.getFusedHeading();
-
     updateOdometry();
 
     synchronized (Drive.this) {
