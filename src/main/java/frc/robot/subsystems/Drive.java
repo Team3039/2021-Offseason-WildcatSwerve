@@ -28,11 +28,6 @@ import frc.robot.RobotContainer;
 
 public class Drive extends SubsystemBase {
 
-  // TODO: The important thing about how you configure your gyroscope is that
-  // TODO: rotating the robot counter-clockwise should
-  // TODO: cause the angle reading to increase until it wraps back over to zero.
-  // FIXME Remove if you are using a Pigeon
-
   private final static Drive INSTANCE = new Drive();
 
   public static Drive getInstance() {

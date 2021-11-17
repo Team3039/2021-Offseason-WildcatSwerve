@@ -26,6 +26,7 @@ public class TestAuto extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+      new ResetRamsete(),
       new SwerveControllerCommand(
             TrajectoryGenerator.getInstance().getDriveStraight(),
             RobotContainer.m_drive::getPose,

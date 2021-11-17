@@ -109,7 +109,8 @@ public final class Constants {
 
     public static final double kPHeading = 1;
 
-    public static final double LIMELIGHT_Y_OFFSET = 1;
+    public static final double LIMELIGHT_X_OFFSET = 0.0;
+    public static final double LIMELIGHT_Y_OFFSET = 2.0;
 
     // Constraint for the motion profilied robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(

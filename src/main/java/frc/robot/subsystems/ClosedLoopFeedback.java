@@ -11,10 +11,22 @@ import frc.robot.Constants;
 
 public class ClosedLoopFeedback extends SubsystemBase {
   /** Creates a new ClosedLoopFeedback. */
+  public final static ClosedLoopFeedback INSTANCE = new ClosedLoopFeedback();
+
+  public static ClosedLoopFeedback getInstance() {
+    return INSTANCE;
+  }
+
   public static double limelightX;
   public static double limelightY;
   public static double limelightArea;
   public static double limelightFound;
+
+  public static double correctionX;
+  public static double correctionY;
+  
+  public static double errorX;
+  public static double errorY;
 
   public ClosedLoopFeedback() {
   }
@@ -23,31 +35,36 @@ public class ClosedLoopFeedback extends SubsystemBase {
     if (!isTargetValid())
       return 0.0;
 
-    double correction = limelightX * Constants.kPLimelightController;
-    if (correction < Constants.kLimelightMinCorrection)
-      correction = Math.copySign(Constants.kLimelightMinCorrection, correction);
+    errorX = limelightX + Constants.LIMELIGHT_X_OFFSET;
+    correctionX = errorX * Constants.kPLimelightController;
+
+    if (correctionX < Constants.kLimelightMinCorrection)
+      correctionX = Math.copySign(Constants.kLimelightMinCorrection, correctionX);
     if (Math.abs(limelightX) < Constants.kLimelightDeadZone)
-      correction = 0;
-    return correction;
+      correctionX = 0;
+
+    return correctionX;
   }
 
   public static double calculateHomingOutputTargetY() {
     if (!isTargetValid())
-    return 0.0;
+      return 0.0;
 
-    double targetY = limelightY + Constants.LIMELIGHT_Y_OFFSET;
+    errorY = limelightY + Constants.LIMELIGHT_Y_OFFSET;
+    correctionY = errorY * Constants.kPLimelightController;
 
-    double correction = targetY * Constants.kPLimelightController;
-    if (correction < Constants.kLimelightMinCorrection)
-      correction = Math.copySign(Constants.kLimelightMinCorrection, correction);
+    if (correctionY < Constants.kLimelightMinCorrection)
+      correctionY = Math.copySign(Constants.kLimelightMinCorrection, correctionY);
     if (Math.abs(limelightY) < Constants.kLimelightDeadZone)
-      correction = 0;
-    return correction;
+      correctionY = 0;
+
+    return correctionY;
   }
 
   public static boolean isTargetValid() {
     if (limelightFound == 0)
       return false;
+
     return true;
   }
 

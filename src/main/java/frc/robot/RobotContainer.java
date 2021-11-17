@@ -86,10 +86,19 @@ public class RobotContainer {
       return 0.0;
     if (RobotContainer.isCeiling(getDriver().getLeftYAxis()))
       return 1.0;
-    if (Drive.getInstance().isHighGear())
-      return Math.sqrt(getDriver().getLeftYAxis());
-    else
-      return getDriver().getLeftYAxis() * getDriver().getLeftYAxis();
+    if (Drive.getInstance().isHighGear()) {
+      if (getDriver().getLeftYAxis() < 0) {
+        return Math.sqrt(getDriver().getLeftYAxis());
+      }
+      return -Math.sqrt(getDriver().getLeftYAxis());
+    }
+
+    else {
+      if (getDriver().getLeftYAxis() < 0) {
+        return getDriver().getLeftYAxis() * getDriver().getLeftYAxis();
+      }
+      return -(getDriver().getLeftYAxis() * getDriver().getLeftYAxis());
+    }
   }
 
   public static double interpolatedLeftXAxis() {
@@ -97,10 +106,19 @@ public class RobotContainer {
       return 0.0;
     if (RobotContainer.isCeiling(getDriver().getLeftXAxis()))
       return 1.0;
-    if (Drive.getInstance().isHighGear())
-      return Math.sqrt(getDriver().getLeftXAxis());
-    else
-      return getDriver().getLeftXAxis() * getDriver().getLeftXAxis();
+    if (Drive.getInstance().isHighGear()) {
+      if (getDriver().getLeftXAxis() > 0) {
+        return Math.sqrt(getDriver().getLeftXAxis());
+      }
+      return -Math.sqrt(getDriver().getLeftXAxis());
+    }
+
+    else {
+      if (getDriver().getLeftXAxis() > 0) {
+        return getDriver().getLeftXAxis() * getDriver().getLeftXAxis();
+      }
+      return -(getDriver().getLeftXAxis() * getDriver().getLeftXAxis());
+    }
   }
 
   public static double interpolatedRightXAxis() {
@@ -108,10 +126,19 @@ public class RobotContainer {
       return 0.0;
     if (RobotContainer.isCeiling(getDriver().getRightXAxis()))
       return 1.0;
-    if (Drive.getInstance().isHighGear())
-      return Math.sqrt(getDriver().getRightXAxis());
-    else
-      return getDriver().getRightXAxis() * getDriver().getRightXAxis();
+      if (Drive.getInstance().isHighGear()) {
+        if (getDriver().getRightXAxis() > 0) {
+          return Math.sqrt(getDriver().getRightXAxis());
+        }
+        return -Math.sqrt(getDriver().getRightXAxis());
+      }
+  
+      else {
+        if (getDriver().getRightXAxis() > 0) {
+          return getDriver().getRightXAxis() * getDriver().getRightXAxis();
+        }
+        return -(getDriver().getRightXAxis() * getDriver().getRightXAxis());
+      }
   }
 
   public static void outputTelemetry(String telemetry) {
