@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.commands.SetHighGear;
 import frc.robot.commands.ToggleFieldRelative;
 import frc.robot.commands.ZeroGyroscope;
@@ -88,16 +89,16 @@ public class RobotContainer {
       return 1.0;
     if (Drive.getInstance().isHighGear()) {
       if (getDriver().getLeftYAxis() < 0) {
-        return Math.sqrt(getDriver().getLeftYAxis());
+        return Math.tanh(getDriver().getLeftYAxis() * 2);
       }
-      return -Math.sqrt(getDriver().getLeftYAxis());
+      return -Math.tanh(getDriver().getLeftYAxis() * 2);
     }
 
     else {
       if (getDriver().getLeftYAxis() < 0) {
-        return getDriver().getLeftYAxis() * getDriver().getLeftYAxis();
+        return getDriver().getLeftYAxis() * getDriver().getLeftYAxis() * getDriver().getLeftYAxis() * getDriver().getLeftYAxis();
       }
-      return -(getDriver().getLeftYAxis() * getDriver().getLeftYAxis());
+      return -(getDriver().getLeftYAxis() * getDriver().getLeftYAxis() * getDriver().getLeftYAxis() * getDriver().getLeftYAxis());
     }
   }
 
@@ -108,16 +109,16 @@ public class RobotContainer {
       return 1.0;
     if (Drive.getInstance().isHighGear()) {
       if (getDriver().getLeftXAxis() > 0) {
-        return Math.sqrt(getDriver().getLeftXAxis());
+        return Math.tanh(getDriver().getLeftXAxis() * 2);
       }
-      return -Math.sqrt(getDriver().getLeftXAxis());
+      return -Math.tanh(getDriver().getLeftXAxis() * 2);
     }
 
     else {
       if (getDriver().getLeftXAxis() > 0) {
-        return getDriver().getLeftXAxis() * getDriver().getLeftXAxis();
+        return getDriver().getLeftXAxis() * getDriver().getLeftXAxis() * getDriver().getLeftXAxis() * getDriver().getLeftXAxis();
       }
-      return -(getDriver().getLeftXAxis() * getDriver().getLeftXAxis());
+      return -(getDriver().getLeftXAxis() * getDriver().getLeftXAxis() * getDriver().getLeftXAxis() * getDriver().getLeftXAxis());
     }
   }
 
@@ -126,18 +127,18 @@ public class RobotContainer {
       return 0.0;
     if (RobotContainer.isCeiling(getDriver().getRightXAxis()))
       return 1.0;
-      if (Drive.getInstance().isHighGear()) {
+    if (Drive.getInstance().isHighGear()) {
         if (getDriver().getRightXAxis() > 0) {
-          return Math.sqrt(getDriver().getRightXAxis());
+          return Math.tanh(getDriver().getRightXAxis() * 2);
         }
-        return -Math.sqrt(getDriver().getRightXAxis());
+        return -Math.tanh(getDriver().getRightXAxis() * 2);
       }
   
       else {
         if (getDriver().getRightXAxis() > 0) {
-          return getDriver().getRightXAxis() * getDriver().getRightXAxis();
+          return getDriver().getRightXAxis() * getDriver().getRightXAxis() * getDriver().getRightXAxis() * getDriver().getRightXAxis();
         }
-        return -(getDriver().getRightXAxis() * getDriver().getRightXAxis());
+        return -(getDriver().getRightXAxis() * getDriver().getRightXAxis() * getDriver().getRightXAxis() * getDriver().getRightXAxis());
       }
   }
 
