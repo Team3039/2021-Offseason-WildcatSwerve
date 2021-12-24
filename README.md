@@ -5,4 +5,4 @@
 -----
 
 Contributers: bodhaansh@gmail.com
-CoContributors: bman2505@yahoo.com
+Co-Contributors: bman2505@yahoo.com
