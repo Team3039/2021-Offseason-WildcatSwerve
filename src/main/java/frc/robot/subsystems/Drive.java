@@ -90,6 +90,7 @@ public class Drive extends SubsystemBase {
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, Constants.kMaxSpeedMetersPerSecond);
+
     m_frontLeftModule.set(
         desiredStates[0].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.MAX_VOLTAGE,
         desiredStates[0].angle.getRadians());
@@ -119,6 +120,8 @@ public class Drive extends SubsystemBase {
       driveChassisSpeeds.vyMetersPerSecond *= (Constants.MAX_VELOCITY_METERS_PER_SECOND - 1);
       driveChassisSpeeds.omegaRadiansPerSecond *= (Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND - 1);
     }
+
+    SwerveModuleState[] states = Constants.kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds);
 
     setModuleStates(states);
   }

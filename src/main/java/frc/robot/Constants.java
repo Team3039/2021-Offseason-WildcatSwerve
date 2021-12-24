@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
+
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
@@ -21,8 +23,10 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
  */
 public final class Constants {
 
-    public static final double MAX_VOLTAGE = 10.0;
-    public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 / 8.16 * 0.1016 * Math.PI;
+    public static final double MAX_VOLTAGE = 12.0;
+    public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 *
+        SdsModuleConfigurations.MK3_STANDARD.getDriveReduction() *
+        SdsModuleConfigurations.MK3_STANDARD.getWheelDiameter() * Math.PI;
 
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 1.0; // FIXME Measure and set trackwidth
     public static final double DRIVETRAIN_WHEELBASE_METERS = 1.0; // FIXME Measure and set wheelbase
@@ -66,29 +70,8 @@ public final class Constants {
                 new SwerveModuleState()
         };
 
-    // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
-    // These characterization values MUST be determined either experimentally or
-    // theoretically
-    // for *your* robot's drive.
-    // TODO: The RobotPy Characterization Toolsuite provides a convenient tool for
-    // obtaining these
-    // TODO: values for your robot.
-//     public static final double ksVolts = 1;
-//     public static final double kvVoltSecondsPerMeter = 0.8;
-//     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
-
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND
             / Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
-
-    public static final int kEncoderCPR = 4096;
-    public static final double kWheelDiameterMeters = 0.15;
-    public static final double kDriveEncoderDistancePerPulse =
-            // Assumes the encoders are directly mounted on the wheel shafts
-            (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
-
-    public static final double kTurningEncoderDistancePerPulse =
-            // Assumes the encoders are on a 1:1 reduction with the module shaft.
-            (2 * Math.PI) / (double) kEncoderCPR;
 
     public static final double kMaxSpeedMetersPerSecond = 2.5;
     public static final double kMinSpeedMetersPerSecond = 2.5;

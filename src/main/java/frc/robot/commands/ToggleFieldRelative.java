@@ -18,7 +18,7 @@ public class ToggleFieldRelative extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.m_drive.setControlMode(DriveControlMode.JOYSTICK_FIELD_CENTRIC);
+    RobotContainer.m_drive.setControlMode(DriveControlMode.JOYSTICK_ROBOT_CENTRIC);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
