@@ -90,7 +90,7 @@ public final class Constants {
     public static final double kLimelightMinCorrection = 0.003;
     public static final double kLimelightDeadZone = 0.05;
 
-    public static final double kPHeading = 1;
+    public static final double kPHeading = 0.0005;
 
     public static final double LIMELIGHT_X_OFFSET = 0.0;
     public static final double LIMELIGHT_Y_OFFSET = 2.0;
