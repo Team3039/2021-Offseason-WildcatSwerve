@@ -10,6 +10,7 @@ import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
@@ -54,6 +55,7 @@ public class Drive extends SubsystemBase {
   double yawCorrection;
 
   boolean isHighGear;
+  boolean alternateCenter;
 
   SwerveDriveOdometry m_odometry;
 
@@ -85,7 +87,8 @@ public class Drive extends SubsystemBase {
     m_odometry = new SwerveDriveOdometry(Constants.kDriveKinematics,
         Rotation2d.fromDegrees(getPigeon().getFusedHeading()));
 
-    isHighGear = true;
+    isHighGear = false;
+    alternateCenter = false;
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -121,9 +124,21 @@ public class Drive extends SubsystemBase {
       driveChassisSpeeds.omegaRadiansPerSecond *= (Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND - 1);
     }
 
-    SwerveModuleState[] states = Constants.kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds);
+    SwerveModuleState[] states;
 
-    setModuleStates(states);
+    if (alternateCenter) {
+      states = Constants.kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds, new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2));
+    }
+    else {
+      states = Constants.kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds, new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2));
+    }
+
+    try {
+      setModuleStates(states);
+    }
+    catch (NullPointerException error) {
+      setModuleStates(Constants.zeroStates);
+    }
   }
 
   public void driveManualFieldCentric() {
@@ -243,6 +258,14 @@ public class Drive extends SubsystemBase {
 
   public void setHighGear(boolean gear) {
     isHighGear = gear;
+  }
+
+  public boolean isAlternateCenter() {
+    return alternateCenter;
+  }
+
+  public void setAlternateCenter(boolean altCenter) {
+    alternateCenter = altCenter;
   }
 
   @Override

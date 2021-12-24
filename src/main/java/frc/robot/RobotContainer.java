@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpiutil.math.MathUtil;
+import frc.robot.commands.SetAlternateCenter;
 import frc.robot.commands.SetHighGear;
 import frc.robot.commands.ToggleFieldRelative;
 import frc.robot.commands.ZeroGyroscope;
@@ -49,11 +50,14 @@ public class RobotContainer {
     Button driverPadButton = getDriver().getButtonPad();
     driverPadButton.whenPressed(new ZeroGyroscope());
 
-    Button driverL1 = getDriver().getL1();
-    driverL1.toggleWhenPressed(new ToggleFieldRelative());
+    Button driverX = getDriver().getButtonX();
+    driverX.toggleWhenPressed(new ToggleFieldRelative());
 
     Button driverR1 = getDriver().getR1();
     driverR1.toggleWhenPressed(new SetHighGear());
+
+    Button driverL1 = getDriver().getL1();
+    driverL1.toggleWhenPressed(new SetAlternateCenter());
   }
 
   /**
