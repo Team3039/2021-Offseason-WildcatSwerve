@@ -86,64 +86,16 @@ public class RobotContainer {
     return false;
   }
 
-  public static double interpolatedLeftYAxis() {
-    if (RobotContainer.inDeadZone(getDriver().getLeftYAxis()))
-      return 0.0;
-    if (RobotContainer.isCeiling(getDriver().getLeftYAxis()))
-      return 1.0;
-    if (Drive.getInstance().isHighGear()) {
-      if (getDriver().getLeftYAxis() < 0) {
-        return Math.tanh(getDriver().getLeftYAxis() * 2);
-      }
-      return -Math.tanh(getDriver().getLeftYAxis() * 2);
-    }
-
-    else {
-      if (getDriver().getLeftYAxis() < 0) {
-        return getDriver().getLeftYAxis() * getDriver().getLeftYAxis() * getDriver().getLeftYAxis() * getDriver().getLeftYAxis();
-      }
-      return -(getDriver().getLeftYAxis() * getDriver().getLeftYAxis() * getDriver().getLeftYAxis() * getDriver().getLeftYAxis());
-    }
+  public static void interpolatedLeftYAxis() {
+    m_driver.interpolatedLeftYAxis();
   }
 
-  public static double interpolatedLeftXAxis() {
-    if (RobotContainer.inDeadZone(getDriver().getLeftXAxis()))
-      return 0.0;
-    if (RobotContainer.isCeiling(getDriver().getLeftXAxis()))
-      return 1.0;
-    if (Drive.getInstance().isHighGear()) {
-      if (getDriver().getLeftXAxis() > 0) {
-        return Math.tanh(getDriver().getLeftXAxis() * 2);
-      }
-      return -Math.tanh(getDriver().getLeftXAxis() * 2);
-    }
-
-    else {
-      if (getDriver().getLeftXAxis() > 0) {
-        return getDriver().getLeftXAxis() * getDriver().getLeftXAxis() * getDriver().getLeftXAxis() * getDriver().getLeftXAxis();
-      }
-      return -(getDriver().getLeftXAxis() * getDriver().getLeftXAxis() * getDriver().getLeftXAxis() * getDriver().getLeftXAxis());
-    }
+  public static void interpolatedLeftXAxis() {
+    m_driver.interpolatedLeftXAxis();
   }
 
-  public static double interpolatedRightXAxis() {
-    if (RobotContainer.inDeadZone(getDriver().getRightXAxis()))
-      return 0.0;
-    if (RobotContainer.isCeiling(getDriver().getRightXAxis()))
-      return 1.0;
-    if (Drive.getInstance().isHighGear()) {
-        if (getDriver().getRightXAxis() > 0) {
-          return Math.tanh(getDriver().getRightXAxis() * 2);
-        }
-        return -Math.tanh(getDriver().getRightXAxis() * 2);
-      }
-  
-      else {
-        if (getDriver().getRightXAxis() > 0) {
-          return getDriver().getRightXAxis() * getDriver().getRightXAxis() * getDriver().getRightXAxis() * getDriver().getRightXAxis();
-        }
-        return -(getDriver().getRightXAxis() * getDriver().getRightXAxis() * getDriver().getRightXAxis() * getDriver().getRightXAxis());
-      }
+  public static void interpolatedRightXAxis() {
+    m_driver.interpolatedRightXAxis();
   }
 
   public static void outputTelemetry(String telemetry) {
