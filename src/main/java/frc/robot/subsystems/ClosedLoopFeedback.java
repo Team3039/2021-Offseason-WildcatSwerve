@@ -35,7 +35,7 @@ public class ClosedLoopFeedback extends SubsystemBase {
     if (!isTargetValid())
       return 0.0;
 
-    errorX = limelightX + Constants.LIMELIGHT_X_OFFSET;
+    errorX = limelightX - Constants.LIMELIGHT_X_OFFSET;
     correctionX = errorX * Constants.kPLimelightController;
 
     if (correctionX < Constants.kLimelightMinCorrection)
@@ -50,7 +50,7 @@ public class ClosedLoopFeedback extends SubsystemBase {
     if (!isTargetValid())
       return 0.0;
 
-    errorY = limelightY + Constants.LIMELIGHT_Y_OFFSET;
+    errorY = limelightY - Constants.LIMELIGHT_Y_OFFSET;
     correctionY = errorY * Constants.kPLimelightController;
 
     if (correctionY < Constants.kLimelightMinCorrection)
