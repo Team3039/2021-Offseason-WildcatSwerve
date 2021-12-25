@@ -86,16 +86,16 @@ public class RobotContainer {
     return false;
   }
 
-  public static void interpolatedLeftYAxis() {
-    m_driver.interpolatedLeftYAxis();
+  public static double interpolatedLeftYAxis() {
+   return m_driver.interpolatedLeftYAxis();
   }
 
-  public static void interpolatedLeftXAxis() {
-    m_driver.interpolatedLeftXAxis();
+  public static double interpolatedLeftXAxis() {
+   return m_driver.interpolatedLeftXAxis();
   }
 
-  public static void interpolatedRightXAxis() {
-    m_driver.interpolatedRightXAxis();
+  public static double interpolatedRightXAxis() {
+   return m_driver.interpolatedRightXAxis();
   }
 
   public static void outputTelemetry(String telemetry) {
