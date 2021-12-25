@@ -7,11 +7,15 @@ public class InterpolatedPS4Gamepad extends PS4Gamepad {
     static double deadZoneThreshold;
     static double fullThrottleThreshold;
 
+    static RampComponent rComponent;
+
     public InterpolatedPS4Gamepad(int port) {
         super(port);
 
         deadZoneThreshold = 0.05;
         fullThrottleThreshold = 0.9;
+
+        rComponent = new RampComponent(1, 0.25);
     }
 
     public static boolean inDeadZone(double axis) {
@@ -32,9 +36,9 @@ public class InterpolatedPS4Gamepad extends PS4Gamepad {
         if (isCeiling(getLeftYAxis()))
             return 1.0;
         if (Drive.getInstance().isHighGear())
-            return Math.sqrt(getLeftYAxis());
+            return rComponent.applyAsDouble(Math.sqrt(getLeftYAxis()));
         else
-            return getLeftYAxis() * getLeftYAxis();
+            return rComponent.applyAsDouble(getLeftYAxis() * getLeftYAxis());
     }
 
     public double interpolatedLeftXAxis() {
@@ -43,9 +47,9 @@ public class InterpolatedPS4Gamepad extends PS4Gamepad {
         if (isCeiling(getLeftXAxis()))
             return 1.0;
         if (Drive.getInstance().isHighGear())
-            return Math.sqrt(getLeftXAxis());
+            return rComponent.applyAsDouble(Math.sqrt(getLeftXAxis()));
         else
-            return getLeftXAxis() * getLeftXAxis();
+            return rComponent.applyAsDouble(getLeftXAxis() * getLeftXAxis());
     }
 
     public double interpolatedRightXAxis() {
@@ -54,8 +58,8 @@ public class InterpolatedPS4Gamepad extends PS4Gamepad {
         if (isCeiling(getRightXAxis()))
             return 1.0;
         if (Drive.getInstance().isHighGear())
-            return Math.sqrt(getRightXAxis());
+            return rComponent.applyAsDouble(Math.sqrt(getRightXAxis()));
         else
-            return getRightXAxis() * getRightXAxis();
+            return rComponent.applyAsDouble(getRightXAxis() * getRightXAxis());
     }
 }

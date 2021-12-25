@@ -60,19 +60,13 @@ public class TrajectoryGenerator {
                                                         Constants.kMaxSpeedMetersPerSecond))
                                         .setReversed(true);
 
-        public Trajectory getDriveStraight() {
-                m_LastTrajectory = edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(),
-                                List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-                                new Pose2d(3, 0, new Rotation2d(Units.degreesToRadians(0))), forwardConfigSlow);
-                return m_LastTrajectory;
-        }
-
-        public Trajectory getDriveStraightReversed() {
-                m_LastTrajectory = edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(),
-                                List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-                                new Pose2d(3, 0, new Rotation2d(Units.degreesToRadians(0))), reverseConfigSlow);
-                return m_LastTrajectory;
+        public Trajectory getDriveTest() {
+                return edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator.generateTrajectory(
+                        List.of(
+                                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                                new Pose2d(0, 5, Rotation2d.fromDegrees(180))
+                        ),
+                        forwardConfigFast
+                );
         }
 }

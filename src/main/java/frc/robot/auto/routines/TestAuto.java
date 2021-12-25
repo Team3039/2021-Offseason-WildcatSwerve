@@ -5,6 +5,7 @@
 package frc.robot.auto.routines;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -28,7 +29,7 @@ public class TestAuto extends SequentialCommandGroup {
     addCommands(
       new ResetRamsete(),
       new SwerveControllerCommand(
-            TrajectoryGenerator.getInstance().getDriveStraight(),
+            TrajectoryGenerator.getInstance().getDriveTest(),
             RobotContainer.m_drive::getPose,
             Constants.kDriveKinematics,
             new PIDController(Constants.kPXController, 0, 0),
