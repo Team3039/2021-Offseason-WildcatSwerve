@@ -130,7 +130,7 @@ public class Drive extends SubsystemBase {
       states = Constants.kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds, new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2));
     }
     else {
-      states = Constants.kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds, new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2));
+      states = Constants.kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds);
     }
 
     try {
