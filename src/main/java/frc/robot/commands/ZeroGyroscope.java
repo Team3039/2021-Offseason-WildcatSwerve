@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.Drive;
 
 public class ZeroGyroscope extends CommandBase {
   /** Creates a new ZeroGyroscope. */
@@ -16,7 +16,7 @@ public class ZeroGyroscope extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.m_drive.zeroGyroscope();
+    Drive.getInstance().zeroGyroscope();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
