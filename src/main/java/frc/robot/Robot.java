@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.VideoMode;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -53,7 +49,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    drive.resetOdometry(new Pose2d());
+    Drive.getInstance().resetOdometry(new Pose2d());
     TrajectoryGenerator.getInstance().thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     autonTaskChooser = new SendableChooser<>();
@@ -79,7 +75,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Time Remaining", Timer.getMatchTime());
     SmartDashboard.updateValues();
 
-    m_Field2d.setRobotPose(RobotContainer.m_drive.getPose());
+    m_Field2d.setRobotPose(m_robotContainer.m_drive.getPose());
   }
 
   @Override
@@ -92,7 +88,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    RobotContainer.m_drive.setControlMode(DriveControlMode.PATH_FOLLOWING);
+    Drive.getInstance().setControlMode(DriveControlMode.PATH_FOLLOWING);
 
     m_autonomousCommand = autonTaskChooser.getSelected();
 

@@ -4,10 +4,14 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.LIMELIGHT_X_OFFSET;
+import static frc.robot.Constants.LIMELIGHT_Y_OFFSET;
+import static frc.robot.Constants.kLimelightDeadZone;
+import static frc.robot.Constants.kLimelightMinCorrection;
+import static frc.robot.Constants.kPLimelightController;
+
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class ClosedLoopFeedback extends SubsystemBase {
   /** Creates a new ClosedLoopFeedback. */
@@ -35,12 +39,12 @@ public class ClosedLoopFeedback extends SubsystemBase {
     if (!isTargetValid())
       return 0.0;
 
-    errorX = limelightX - Constants.LIMELIGHT_X_OFFSET;
-    correctionX = errorX * Constants.kPLimelightController;
+    errorX = limelightX + LIMELIGHT_X_OFFSET;
+    correctionX = errorX * kPLimelightController;
 
-    if (correctionX < Constants.kLimelightMinCorrection)
-      correctionX = Math.copySign(Constants.kLimelightMinCorrection, correctionX);
-    if (Math.abs(limelightX) < Constants.kLimelightDeadZone)
+    if (correctionX < kLimelightMinCorrection)
+      correctionX = Math.copySign(kLimelightMinCorrection, correctionX);
+    if (Math.abs(limelightX) < kLimelightDeadZone)
       correctionX = 0;
 
     return correctionX;
@@ -50,12 +54,12 @@ public class ClosedLoopFeedback extends SubsystemBase {
     if (!isTargetValid())
       return 0.0;
 
-    errorY = limelightY - Constants.LIMELIGHT_Y_OFFSET;
-    correctionY = errorY * Constants.kPLimelightController;
+    errorY = limelightY + LIMELIGHT_Y_OFFSET;
+    correctionY = errorY * kPLimelightController;
 
-    if (correctionY < Constants.kLimelightMinCorrection)
-      correctionY = Math.copySign(Constants.kLimelightMinCorrection, correctionY);
-    if (Math.abs(limelightY) < Constants.kLimelightDeadZone)
+    if (correctionY < kLimelightMinCorrection)
+      correctionY = Math.copySign(kLimelightMinCorrection, correctionY);
+    if (Math.abs(limelightY) < kLimelightDeadZone)
       correctionY = 0;
 
     return correctionY;

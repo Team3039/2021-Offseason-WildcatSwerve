@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveControlMode;
 
 public class SetDriveControlMode extends CommandBase {
@@ -19,7 +19,7 @@ public class SetDriveControlMode extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.m_drive.setControlMode(controlMode);
+    Drive.getInstance().setControlMode(controlMode);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

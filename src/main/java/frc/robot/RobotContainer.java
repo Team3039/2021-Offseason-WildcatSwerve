@@ -4,18 +4,16 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.commands.SetAlternateCenter;
 import frc.robot.commands.SetHighGear;
 import frc.robot.commands.ToggleFieldRelative;
 import frc.robot.commands.ZeroGyroscope;
 import frc.robot.controllers.InterpolatedPS4Gamepad;
-import frc.robot.controllers.PS4Gamepad;
 import frc.robot.subsystems.Drive;
 
 /**
@@ -27,7 +25,7 @@ import frc.robot.subsystems.Drive;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  public final static Drive m_drive = new Drive();
+  public final Drive m_drive = new Drive();
 
   public final static InterpolatedPS4Gamepad m_driver = new InterpolatedPS4Gamepad(0);
 

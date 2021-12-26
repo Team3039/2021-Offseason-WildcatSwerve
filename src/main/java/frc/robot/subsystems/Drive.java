@@ -4,6 +4,12 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.*;
+
+import java.util.List;
+
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -19,13 +25,8 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpiutil.math.MathUtil;
-import frc.robot.Constants;
-import frc.robot.Robot;
-
-import static frc.robot.Constants.*;
-
 import frc.robot.RobotContainer;
+import frc.robot.util.SwerveModuleClosedLoop;
 
 public class Drive extends SubsystemBase {
 
@@ -41,10 +42,32 @@ public class Drive extends SubsystemBase {
 
   private DriveControlMode driveControlMode = DriveControlMode.JOYSTICK_FIELD_CENTRIC;
 
+  TalonFX m_frontLeftDrive;
+  TalonFX m_frontRightDrive;
+  TalonFX m_backLeftDrive;
+  TalonFX m_backRightDrive;
+
+  TalonFX m_frontLeftSteer;
+  TalonFX m_frontRightSteer;
+  TalonFX m_backLeftSteer;
+  TalonFX m_backRightSteer;
+
+  CANCoder m_frontLeftCanCoder;
+  CANCoder m_frontRightCanCoder;
+  CANCoder m_backLeftCanCoder;
+  CANCoder m_backRightCanCoder;
+
   private final SwerveModule m_frontLeftModule;
   private final SwerveModule m_frontRightModule;
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
+
+  private final SwerveModuleClosedLoop m_frLClosedLoop;
+  private final SwerveModuleClosedLoop m_frRClosedLoop;
+  private final SwerveModuleClosedLoop m_bkLClosedLoop;
+  private final SwerveModuleClosedLoop m_bkRClosedLoop;
+
+  private final List<SwerveModuleClosedLoop> m_modulesClosedLoop;
 
   private ChassisSpeeds driveChassisSpeeds;
 
@@ -67,44 +90,104 @@ public class Drive extends SubsystemBase {
         Mk3SwerveModuleHelper.GearRatio.STANDARD, FRONT_LEFT_MODULE_DRIVE_MOTOR, FRONT_LEFT_MODULE_STEER_MOTOR,
         FRONT_LEFT_MODULE_STEER_ENCODER, FRONT_LEFT_MODULE_STEER_OFFSET);
 
+    m_frontLeftDrive = new TalonFX(FRONT_LEFT_MODULE_DRIVE_MOTOR);
+    m_frontLeftSteer = new TalonFX(FRONT_LEFT_MODULE_STEER_MOTOR);
+    m_frontLeftCanCoder = new CANCoder(FRONT_LEFT_MODULE_STEER_ENCODER);
+
     m_frontRightModule = Mk3SwerveModuleHelper.createFalcon500(
         tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
         Mk3SwerveModuleHelper.GearRatio.STANDARD, FRONT_RIGHT_MODULE_DRIVE_MOTOR, FRONT_RIGHT_MODULE_STEER_MOTOR,
         FRONT_RIGHT_MODULE_STEER_ENCODER, FRONT_RIGHT_MODULE_STEER_OFFSET);
+
+    m_frontRightDrive = new TalonFX(FRONT_RIGHT_MODULE_DRIVE_MOTOR);
+    m_frontRightSteer = new TalonFX(FRONT_RIGHT_MODULE_DRIVE_MOTOR);
 
     m_backLeftModule = Mk3SwerveModuleHelper.createFalcon500(
         tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
         Mk3SwerveModuleHelper.GearRatio.STANDARD, BACK_LEFT_MODULE_DRIVE_MOTOR, BACK_LEFT_MODULE_STEER_MOTOR,
         BACK_LEFT_MODULE_STEER_ENCODER, BACK_LEFT_MODULE_STEER_OFFSET);
 
+    m_backLeftDrive = new TalonFX(BACK_LEFT_MODULE_DRIVE_MOTOR);
+    m_backLeftSteer = new TalonFX(BACK_LEFT_MODULE_STEER_MOTOR);
+
     m_backRightModule = Mk3SwerveModuleHelper.createFalcon500(
         tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
         Mk3SwerveModuleHelper.GearRatio.STANDARD, BACK_RIGHT_MODULE_DRIVE_MOTOR, BACK_RIGHT_MODULE_STEER_MOTOR,
         BACK_RIGHT_MODULE_STEER_ENCODER, BACK_RIGHT_MODULE_STEER_OFFSET);
 
+    m_backRightDrive = new TalonFX(BACK_RIGHT_MODULE_DRIVE_MOTOR);
+    m_backRightSteer = new TalonFX(BACK_RIGHT_MODULE_STEER_MOTOR);
+
+    m_frLClosedLoop = new SwerveModuleClosedLoop(m_frontLeftDrive, m_frontLeftSteer, m_frontLeftCanCoder,
+        FRONT_LEFT_MODULE_STEER_OFFSET);
+    m_frRClosedLoop = new SwerveModuleClosedLoop(m_frontRightDrive, m_frontRightSteer, m_frontRightCanCoder,
+        FRONT_RIGHT_MODULE_STEER_OFFSET);
+    m_bkLClosedLoop = new SwerveModuleClosedLoop(m_backLeftDrive, m_backLeftSteer, m_backLeftCanCoder,
+        BACK_LEFT_MODULE_STEER_OFFSET);
+    m_bkRClosedLoop = new SwerveModuleClosedLoop(m_backRightDrive, m_backRightSteer, m_backRightCanCoder,
+        BACK_RIGHT_MODULE_STEER_OFFSET);
+
+    m_modulesClosedLoop = List.of(m_frLClosedLoop, m_frRClosedLoop, m_bkLClosedLoop, m_bkRClosedLoop);
+
     m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
 
-    m_odometry = new SwerveDriveOdometry(Constants.kDriveKinematics,
-        Rotation2d.fromDegrees(getPigeon().getFusedHeading()));
+    m_odometry = new SwerveDriveOdometry(kDriveKinematics, Rotation2d.fromDegrees(getPigeon().getFusedHeading()));
 
     isHighGear = false;
     alternateCenter = false;
   }
 
-  public void setModuleStates(SwerveModuleState[] desiredStates) {
-    SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, Constants.kMaxSpeedMetersPerSecond);
+  public static SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
+    double targetAngle = placeInAppropriate0To360Scope(currentAngle.getDegrees(), desiredState.angle.getDegrees());
+    double targetSpeed = desiredState.speedMetersPerSecond;
+    double delta = targetAngle - currentAngle.getDegrees();
+    if (Math.abs(delta) > 90) {
+      targetSpeed = -targetSpeed;
+      targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
+    }
+    return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
+  }
 
-    m_frontLeftModule.set(
-        desiredStates[0].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.MAX_VOLTAGE,
+  private static double placeInAppropriate0To360Scope(double scopeReference, double newAngle) {
+    double lowerBound;
+    double upperBound;
+    double lowerOffset = scopeReference % 360;
+    if (lowerOffset >= 0) {
+      lowerBound = scopeReference - lowerOffset;
+      upperBound = scopeReference + (360 - lowerOffset);
+    } else {
+      upperBound = scopeReference - lowerOffset;
+      lowerBound = scopeReference - (360 + lowerOffset);
+    }
+    while (newAngle < lowerBound) {
+      newAngle += 360;
+    }
+    while (newAngle > upperBound) {
+      newAngle -= 360;
+    }
+    if (newAngle - scopeReference > 180) {
+      newAngle -= 360;
+    } else if (newAngle - scopeReference < -180) {
+      newAngle += 360;
+    }
+    return newAngle;
+  }
+
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, kMaxSpeedMetersPerSecond);
+
+    optimize(desiredStates[0], new Rotation2d(m_frontLeftModule.getSteerAngle()));
+    optimize(desiredStates[1], new Rotation2d(m_frontRightModule.getSteerAngle()));
+    optimize(desiredStates[2], new Rotation2d(m_backLeftModule.getSteerAngle()));
+    optimize(desiredStates[3], new Rotation2d(m_backRightModule.getSteerAngle()));
+
+    m_frontLeftModule.set(desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
         desiredStates[0].angle.getRadians());
-    m_frontRightModule.set(
-        desiredStates[1].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.MAX_VOLTAGE,
+    m_frontRightModule.set(desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
         desiredStates[1].angle.getRadians());
-    m_backLeftModule.set(
-        desiredStates[2].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.MAX_VOLTAGE,
+    m_backLeftModule.set(desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
         desiredStates[2].angle.getRadians());
-    m_backRightModule.set(
-        desiredStates[3].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.MAX_VOLTAGE,
+    m_backRightModule.set(desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
         desiredStates[3].angle.getRadians());
   }
 
@@ -113,31 +196,30 @@ public class Drive extends SubsystemBase {
     driveChassisSpeeds = chassisSpeeds;
 
     if (isHighGear()) {
-      driveChassisSpeeds.vxMetersPerSecond *= Constants.MAX_VELOCITY_METERS_PER_SECOND;
-      driveChassisSpeeds.vyMetersPerSecond *= Constants.MAX_VELOCITY_METERS_PER_SECOND;
-      driveChassisSpeeds.omegaRadiansPerSecond *= Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+      driveChassisSpeeds.vxMetersPerSecond *= MAX_VELOCITY_METERS_PER_SECOND;
+      driveChassisSpeeds.vyMetersPerSecond *= MAX_VELOCITY_METERS_PER_SECOND;
+      driveChassisSpeeds.omegaRadiansPerSecond *= MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
     }
 
     else {
-      driveChassisSpeeds.vxMetersPerSecond *= (Constants.MAX_VELOCITY_METERS_PER_SECOND - 1);
-      driveChassisSpeeds.vyMetersPerSecond *= (Constants.MAX_VELOCITY_METERS_PER_SECOND - 1);
-      driveChassisSpeeds.omegaRadiansPerSecond *= (Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND - 1);
+      driveChassisSpeeds.vxMetersPerSecond *= (MAX_VELOCITY_METERS_PER_SECOND - 1);
+      driveChassisSpeeds.vyMetersPerSecond *= (MAX_VELOCITY_METERS_PER_SECOND - 1);
+      driveChassisSpeeds.omegaRadiansPerSecond *= (MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND - 1);
     }
 
     SwerveModuleState[] states;
 
     if (alternateCenter) {
-      states = Constants.kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds, new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2));
-    }
-    else {
-      states = Constants.kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds);
+      states = kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds,
+          new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2));
+    } else {
+      states = kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds);
     }
 
     try {
       setModuleStates(states);
-    }
-    catch (NullPointerException error) {
-      setModuleStates(Constants.zeroStates);
+    } catch (NullPointerException error) {
+      setModuleStates(zeroStates);
     }
   }
 
@@ -150,11 +232,12 @@ public class Drive extends SubsystemBase {
     else {
       if (Math.abs(RobotContainer.getDriver().getLeftYAxis()) > 0
           || Math.abs(RobotContainer.getDriver().getLeftXAxis()) > 0) {
-        yawCorrection = calcYawStraight(storedYaw, yaw, Constants.kPHeading);
+        yawCorrection = calcYawStraight(storedYaw, yaw, kPHeading);
       }
     }
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.interpolatedLeftYAxis(),
-        RobotContainer.interpolatedLeftXAxis(), RobotContainer.interpolatedRightXAxis() + yawCorrection, getGyroscopeRotation()));
+        RobotContainer.interpolatedLeftXAxis(), RobotContainer.interpolatedRightXAxis() + yawCorrection,
+        getGyroscopeRotation()));
   }
 
   public void driveManualRobotCentric() {
@@ -166,11 +249,19 @@ public class Drive extends SubsystemBase {
     else {
       if (Math.abs(RobotContainer.getDriver().getLeftYAxis()) > 0
           || Math.abs(RobotContainer.getDriver().getLeftXAxis()) > 0) {
-        yawCorrection = calcYawStraight(storedYaw, yaw, Constants.kPHeading);
+        yawCorrection = calcYawStraight(storedYaw, yaw, kPHeading);
       }
     }
     drive(new ChassisSpeeds(RobotContainer.interpolatedLeftYAxis(), RobotContainer.interpolatedLeftXAxis(),
         RobotContainer.interpolatedRightXAxis()));
+  }
+
+  public void setModuleStatesClosedLoop(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, MAX_VELOCITY_METERS_PER_SECOND);
+
+    for (int i = 0; i <= 3; i++) {
+      m_modulesClosedLoop.get(i).setDesiredState(desiredStates[i], false);
+    }
   }
 
   public void trackTarget(boolean lockX, boolean lockY, boolean lockTheta) {
@@ -200,27 +291,23 @@ public class Drive extends SubsystemBase {
     this.driveControlMode = controlMode;
   }
 
-  // TODO: Make sure getSteerAngle() returns a radian value
   public SwerveModuleState getFrontLeftState() {
     return new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
-        new Rotation2d(m_frontLeftModule.getSteerAngle()));
+        Rotation2d.fromDegrees(m_frontLeftModule.getSteerAngle()));
   }
 
-  // TODO: Make sure getSteerAngle() returns a radian value
   public SwerveModuleState getFrontRightState() {
     return new SwerveModuleState(m_frontRightModule.getDriveVelocity(),
-        new Rotation2d(m_frontRightModule.getSteerAngle()));
+        Rotation2d.fromDegrees(m_frontRightModule.getSteerAngle()));
   }
 
-  // TODO: Make sure getSteerAngle() returns a radian value
   public SwerveModuleState getBackLeftState() {
-    return new SwerveModuleState(m_backLeftModule.getDriveVelocity(), new Rotation2d(m_backLeftModule.getSteerAngle()));
+    return new SwerveModuleState(m_backLeftModule.getDriveVelocity(), Rotation2d.fromDegrees(m_backLeftModule.getSteerAngle()));
   }
 
-  // TODO: Make sure getSteerAngle() returns a radian value
   public SwerveModuleState getBackRightState() {
     return new SwerveModuleState(m_backRightModule.getDriveVelocity(),
-        new Rotation2d(m_backRightModule.getSteerAngle()));
+        Rotation2d.fromDegrees(m_backRightModule.getSteerAngle()));
   }
 
   public PigeonIMU getPigeon() {
@@ -277,19 +364,19 @@ public class Drive extends SubsystemBase {
     synchronized (Drive.this) {
       DriveControlMode currentControlMode = getControlMode();
       switch (currentControlMode) {
-        case JOYSTICK_FIELD_CENTRIC:
-          driveManualFieldCentric();
-          break;
-        case JOYSTICK_ROBOT_CENTRIC:
-          driveManualRobotCentric();
-          break;
-        case HOMING:
-          trackTarget(true, true, false);
-          break;
-        case PATH_FOLLOWING:
-          break;
-        default:
-          System.out.println("Unknown drive control mode: " + currentControlMode);
+      case JOYSTICK_FIELD_CENTRIC:
+        driveManualFieldCentric();
+        break;
+      case JOYSTICK_ROBOT_CENTRIC:
+        driveManualRobotCentric();
+        break;
+      case HOMING:
+        trackTarget(true, true, false);
+        break;
+      case PATH_FOLLOWING:
+        break;
+      default:
+        System.out.println("Unknown drive control mode: " + currentControlMode);
       }
     }
   }

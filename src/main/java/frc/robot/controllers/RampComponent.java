@@ -55,15 +55,15 @@ public class RampComponent implements DoubleUnaryOperator, Cloneable {
     if (value > lastValue) {
       lastValue =
           Math.min(
-              value, lastValue + (timer.getFPGATimestamp()/1000 - lastTime) * maxIncreasePerMillis);
+              value, lastValue + (timer.get() * 1000 - lastTime) * maxIncreasePerMillis);
     } 
     
     else {
       lastValue =
           Math.max(
-              value, lastValue - (timer.getFPGATimestamp()/1000 - lastTime) * maxDecreasePerMillis);
+              value, lastValue - (timer.get() * 1000 - lastTime) * maxDecreasePerMillis);
     }
-    lastTime = (timer.getFPGATimestamp() / 1000);
+    lastTime = (timer.get() * 1000);
     return lastValue;
   }
 

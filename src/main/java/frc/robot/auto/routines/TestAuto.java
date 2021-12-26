@@ -5,16 +5,10 @@
 package frc.robot.auto.routines;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
 import frc.robot.auto.TrajectoryGenerator;
-import frc.robot.auto.commands.ResetOdometry;
-import frc.robot.auto.commands.StopTrajectory;
 import frc.robot.auto.commands.sequences.ResetRamsete;
 import frc.robot.subsystems.Drive;
 
@@ -30,13 +24,13 @@ public class TestAuto extends SequentialCommandGroup {
       new ResetRamsete(),
       new SwerveControllerCommand(
             TrajectoryGenerator.getInstance().getDriveTest(),
-            RobotContainer.m_drive::getPose,
+            Drive.getInstance()::getPose,
             Constants.kDriveKinematics,
             new PIDController(Constants.kPXController, 0, 0),
             new PIDController(Constants.kPYController, 0, 0),
             TrajectoryGenerator.getInstance().getThetaController(),
-            RobotContainer.m_drive::setModuleStates,
-            RobotContainer.m_drive
+            Drive.getInstance()::setModuleStatesClosedLoop,
+            Drive.getInstance()
             ),
       new ResetRamsete()
     );

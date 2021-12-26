@@ -1,20 +1,21 @@
 package frc.robot.auto;
 
+import static frc.robot.Constants.kDriveKinematics;
+import static frc.robot.Constants.kMaxAccelerationMetersPerSecondSquared;
+import static frc.robot.Constants.kMaxSpeedMetersPerSecond;
+import static frc.robot.Constants.kMinAccelerationMetersPerSecondSquared;
+import static frc.robot.Constants.kMinSpeedMetersPerSecond;
+import static frc.robot.Constants.kPThetaController;
+import static frc.robot.Constants.kThetaControllerConstraints;
+
 import java.util.List;
 
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.trajectory.constraint.SwerveDriveKinematicsConstraint;
-import edu.wpi.first.wpilibj.trajectory.constraint.TrajectoryConstraint;
-
-import edu.wpi.first.wpilibj.util.Units;
-import frc.robot.Constants;
 
 public class TrajectoryGenerator {
         private static final TrajectoryGenerator instance = new TrajectoryGenerator();
@@ -23,41 +24,45 @@ public class TrajectoryGenerator {
                 return instance;
         }
 
+        public TrajectoryGenerator() {
+                thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        }
+
         Trajectory m_LastTrajectory;
 
         public Trajectory getLastTrajectory() {
                 return m_LastTrajectory;
         }
 
-        public ProfiledPIDController thetaController = new ProfiledPIDController(Constants.kPThetaController, 0, 0,
-                        Constants.kThetaControllerConstraints);
+        public ProfiledPIDController thetaController = new ProfiledPIDController(kPThetaController, 0, 0,
+                        kThetaControllerConstraints);
 
         public ProfiledPIDController getThetaController() {
                 return thetaController;
         }
 
-        TrajectoryConfig forwardConfigFast = new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,
-                        Constants.kMaxAccelerationMetersPerSecondSquared).setKinematics(Constants.kDriveKinematics)
-                                        .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics,
-                                                        Constants.kMaxSpeedMetersPerSecond))
+        TrajectoryConfig forwardConfigFast = new TrajectoryConfig(kMaxSpeedMetersPerSecond,
+                        kMaxAccelerationMetersPerSecondSquared).setKinematics(kDriveKinematics)
+                                        .addConstraint(new SwerveDriveKinematicsConstraint(kDriveKinematics,
+                                                        kMaxSpeedMetersPerSecond))
                                         .setReversed(false);
 
-        TrajectoryConfig forwardConfigSlow = new TrajectoryConfig(Constants.kMinSpeedMetersPerSecond,
-                        Constants.kMinAccelerationMetersPerSecondSquared).setKinematics(Constants.kDriveKinematics)
-                                        .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics,
-                                                        Constants.kMaxSpeedMetersPerSecond))
+        TrajectoryConfig forwardConfigSlow = new TrajectoryConfig(kMinSpeedMetersPerSecond,
+                        kMinAccelerationMetersPerSecondSquared).setKinematics(kDriveKinematics)
+                                        .addConstraint(new SwerveDriveKinematicsConstraint(kDriveKinematics,
+                                                        kMaxSpeedMetersPerSecond))
                                         .setReversed(false);
 
-        TrajectoryConfig reverseConfigFast = new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,
-                        Constants.kMaxAccelerationMetersPerSecondSquared).setKinematics(Constants.kDriveKinematics)
-                                        .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics,
-                                                        Constants.kMaxSpeedMetersPerSecond))
+        TrajectoryConfig reverseConfigFast = new TrajectoryConfig(kMaxSpeedMetersPerSecond,
+                        kMaxAccelerationMetersPerSecondSquared).setKinematics(kDriveKinematics)
+                                        .addConstraint(new SwerveDriveKinematicsConstraint(kDriveKinematics,
+                                                        kMaxSpeedMetersPerSecond))
                                         .setReversed(true);
 
-        TrajectoryConfig reverseConfigSlow = new TrajectoryConfig(Constants.kMinSpeedMetersPerSecond,
-                        Constants.kMinAccelerationMetersPerSecondSquared).setKinematics(Constants.kDriveKinematics)
-                                        .addConstraint(new SwerveDriveKinematicsConstraint(Constants.kDriveKinematics,
-                                                        Constants.kMaxSpeedMetersPerSecond))
+        TrajectoryConfig reverseConfigSlow = new TrajectoryConfig(kMinSpeedMetersPerSecond,
+                        kMinAccelerationMetersPerSecondSquared).setKinematics(kDriveKinematics)
+                                        .addConstraint(new SwerveDriveKinematicsConstraint(kDriveKinematics,
+                                                        kMaxSpeedMetersPerSecond))
                                         .setReversed(true);
 
         public Trajectory getDriveTest() {
