@@ -194,7 +194,7 @@ public class Drive extends SubsystemBase {
         desiredStates[3].angle.getRadians());
   }
 
-  public void drive(ChassisSpeeds chassisSpeeds) {
+  public void drive(ChassisSpeeds chassisSpeeds, boolean isOpenLoop) {
 
     driveChassisSpeeds = chassisSpeeds;
 
@@ -219,10 +219,19 @@ public class Drive extends SubsystemBase {
       states = kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds);
     }
 
-    try {
-      setModuleStates(states);
-    } catch (NullPointerException error) {
-      setModuleStates(zeroStates);
+    if (isOpenLoop) {
+      try {
+        setModuleStates(states);
+      } catch (NullPointerException error) {
+        setModuleStates(zeroStates);
+      }
+    }
+    else {
+      try {
+        setModuleStatesClosedLoop(states);
+      } catch (NullPointerException error) {
+        setModuleStatesClosedLoop(zeroStates);
+      }
     }
   }
 
@@ -240,7 +249,7 @@ public class Drive extends SubsystemBase {
     }
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.interpolatedLeftYAxis(),
         RobotContainer.interpolatedLeftXAxis(), RobotContainer.interpolatedRightXAxis() + yawCorrection,
-        getGyroscopeRotation()));
+        getGyroscopeRotation()), true);
   }
 
   public void driveManualRobotCentric() {
@@ -256,7 +265,7 @@ public class Drive extends SubsystemBase {
       }
     }
     drive(new ChassisSpeeds(RobotContainer.interpolatedLeftYAxis(), RobotContainer.interpolatedLeftXAxis(),
-        RobotContainer.interpolatedRightXAxis()));
+        RobotContainer.interpolatedRightXAxis()), true);
   }
 
   public void setModuleStatesClosedLoop(SwerveModuleState[] desiredStates) {
@@ -271,12 +280,12 @@ public class Drive extends SubsystemBase {
     if (lockX && lockY && !lockTheta) {
       drive(ChassisSpeeds.fromFieldRelativeSpeeds(ClosedLoopFeedback.calculateHomingOutputTargetY(),
           ClosedLoopFeedback.calculateHomingOutputTargetX(), RobotContainer.interpolatedRightXAxis(),
-          getGyroscopeRotation()));
+          getGyroscopeRotation()), false);
     }
     if (!lockX && lockY && lockTheta) {
       drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.interpolatedLeftYAxis(),
           ClosedLoopFeedback.calculateHomingOutputTargetX(), ClosedLoopFeedback.calculateHomingOutputTargetX(),
-          getGyroscopeRotation()));
+          getGyroscopeRotation()), false);
     }
   }
 
