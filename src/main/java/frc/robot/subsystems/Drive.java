@@ -101,6 +101,7 @@ public class Drive extends SubsystemBase {
 
     m_frontRightDrive = new TalonFX(FRONT_RIGHT_MODULE_DRIVE_MOTOR);
     m_frontRightSteer = new TalonFX(FRONT_RIGHT_MODULE_DRIVE_MOTOR);
+    m_frontRightCanCoder = new CANCoder(FRONT_RIGHT_MODULE_STEER_ENCODER);
 
     m_backLeftModule = Mk3SwerveModuleHelper.createFalcon500(
         tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
@@ -109,6 +110,7 @@ public class Drive extends SubsystemBase {
 
     m_backLeftDrive = new TalonFX(BACK_LEFT_MODULE_DRIVE_MOTOR);
     m_backLeftSteer = new TalonFX(BACK_LEFT_MODULE_STEER_MOTOR);
+    m_backLeftCanCoder = new CANCoder(BACK_LEFT_MODULE_STEER_ENCODER);
 
     m_backRightModule = Mk3SwerveModuleHelper.createFalcon500(
         tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
@@ -117,6 +119,7 @@ public class Drive extends SubsystemBase {
 
     m_backRightDrive = new TalonFX(BACK_RIGHT_MODULE_DRIVE_MOTOR);
     m_backRightSteer = new TalonFX(BACK_RIGHT_MODULE_STEER_MOTOR);
+    m_backRightCanCoder = new CANCoder(BACK_RIGHT_MODULE_STEER_ENCODER);
 
     m_frLClosedLoop = new SwerveModuleClosedLoop(m_frontLeftDrive, m_frontLeftSteer, m_frontLeftCanCoder,
         FRONT_LEFT_MODULE_STEER_OFFSET);
