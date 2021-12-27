@@ -4,6 +4,9 @@
 # Prerequisites
 *.d
 
+*.gradle
+*.wpilib
+
 # Compiled Object files
 *.slo
 *.lo
