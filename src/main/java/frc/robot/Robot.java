@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import java.util.function.Function;
+
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -21,6 +24,7 @@ import frc.robot.auto.TrajectoryGenerator;
 import frc.robot.auto.commands.sequences.ResetRamsete;
 import frc.robot.auto.routines.DoNothing;
 import frc.robot.auto.routines.TestAuto;
+import frc.robot.commands.SetHighGear;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveControlMode;
 

@@ -6,13 +6,17 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 import java.util.List;
+import java.util.logging.ErrorManager;
+import java.util.logging.Handler;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU;
-
+import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+
+import org.xml.sax.HandlerBase;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -222,14 +226,18 @@ public class Drive extends SubsystemBase {
     if (isOpenLoop) {
       try {
         setModuleStates(states);
-      } catch (NullPointerException error) {
+      } 
+      catch (NullPointerException error) {
         setModuleStates(zeroStates);
       }
-    } else {
+    }
+    else {
       try {
         setModuleStatesClosedLoop(states);
-      } catch (NullPointerException error) {
-        setModuleStatesClosedLoop(zeroStates);
+      }    
+      catch (NullPointerException error) {
+          System.out.println(error.getLocalizedMessage());
+          setModuleStatesClosedLoop(zeroStates);
       }
     }
   }

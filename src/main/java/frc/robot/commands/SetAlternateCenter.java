@@ -9,14 +9,16 @@ import frc.robot.subsystems.Drive;
 
 public class SetAlternateCenter extends CommandBase {
   /** Creates a new SetAlternateCenter. */
-  public SetAlternateCenter() {
+  boolean isAltCenter;
+  public SetAlternateCenter(boolean isAltCenter) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.isAltCenter = isAltCenter;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Drive.getInstance().setAlternateCenter(true);
+    Drive.getInstance().setAlternateCenter(isAltCenter);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -26,7 +28,7 @@ public class SetAlternateCenter extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Drive.getInstance().setAlternateCenter(false);
+    Drive.getInstance().setAlternateCenter(!isAltCenter);
   }
 
   // Returns true when the command should end.

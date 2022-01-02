@@ -52,10 +52,10 @@ public class RobotContainer {
     driverX.toggleWhenPressed(new ToggleFieldRelative());
 
     Button driverR1 = getDriver().getR1();
-    driverR1.toggleWhenPressed(new SetHighGear());
+    driverR1.toggleWhenPressed(new SetHighGear(true));
 
     Button driverL1 = getDriver().getL1();
-    driverL1.toggleWhenPressed(new SetAlternateCenter());
+    driverL1.toggleWhenPressed(new SetAlternateCenter(true));
   }
 
   /**

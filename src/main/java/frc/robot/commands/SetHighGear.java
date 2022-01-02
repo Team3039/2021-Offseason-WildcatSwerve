@@ -9,14 +9,16 @@ import frc.robot.subsystems.Drive;
 
 public class SetHighGear extends CommandBase {
   /** Creates a new SetHighGear. */
-  public SetHighGear() {
+  boolean isHighGear;
+  public SetHighGear(boolean isHighGear) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.isHighGear = isHighGear;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Drive.getInstance().setHighGear(true);
+    Drive.getInstance().setHighGear(isHighGear);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -26,7 +28,7 @@ public class SetHighGear extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Drive.getInstance().setHighGear(false);
+    Drive.getInstance().setHighGear(!isHighGear);
   }
 
   // Returns true when the command should end.
