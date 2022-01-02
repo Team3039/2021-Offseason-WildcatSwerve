@@ -6,13 +6,19 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+
 import frc.robot.auto.TrajectoryGenerator;
+import frc.robot.auto.commands.sequences.ResetRamsete;
 import frc.robot.auto.routines.DoNothing;
 import frc.robot.auto.routines.TestAuto;
 import frc.robot.subsystems.Drive;
@@ -54,10 +60,22 @@ public class Robot extends TimedRobot {
 
     autonTaskChooser = new SendableChooser<>();
 
+    autonTaskChooser.setDefaultOption("Select Routine", new PrintCommand("Autonomous Routine Not Selected"));
     autonTaskChooser.addOption("Test Auto", new TestAuto());
-    autonTaskChooser.setDefaultOption("Test Auto", new TestAuto());
-
     autonTaskChooser.addOption("Do Nothing", new DoNothing());
+    autonTaskChooser.addOption("Planner Test", new SequentialCommandGroup(
+      new ResetRamsete().andThen(
+        new SwerveControllerCommand(TrajectoryGenerator.getInstance().getPlannerTest(),
+          Drive.getInstance()::getPose,
+          Constants.kDriveKinematics,
+          new PIDController(Constants.kPXController, 0, 0),
+          new PIDController(Constants.kPYController, 0, 0),
+          TrajectoryGenerator.getInstance().getThetaController(),
+          Drive.getInstance()::setModuleStatesClosedLoop,
+          Drive.getInstance()
+        ))).andThen(
+          new ResetRamsete()
+      ));
 
     SmartDashboard.putData("Autonomous Selector", autonTaskChooser);
 
@@ -114,6 +132,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
     drive.setControlMode(DriveControlMode.JOYSTICK_FIELD_CENTRIC);
   }
 

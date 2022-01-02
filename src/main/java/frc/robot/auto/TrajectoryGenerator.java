@@ -7,6 +7,7 @@ import static frc.robot.Constants.kMinAccelerationMetersPerSecondSquared;
 import static frc.robot.Constants.kMinSpeedMetersPerSecond;
 import static frc.robot.Constants.kPThetaController;
 import static frc.robot.Constants.kThetaControllerConstraints;
+import static frc.robot.Constants.*;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.constraint.SwerveDriveKinematicsConstraint;
+import frc.robot.util.PathPlanner;
 
 public class TrajectoryGenerator {
         private static final TrajectoryGenerator instance = new TrajectoryGenerator();
@@ -73,5 +75,9 @@ public class TrajectoryGenerator {
                         ),
                         forwardConfigFast
                 );
+        }
+
+        public Trajectory getPlannerTest() {
+                return PathPlanner.loadPath("New Path", MAX_VELOCITY_METERS_PER_SECOND, MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
         }
 }
