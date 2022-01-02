@@ -1,7 +1,5 @@
 import org.gradle.internal.os.OperatingSystem
 
-include ':common'
-
 pluginManagement {
     repositories {
         mavenLocal()

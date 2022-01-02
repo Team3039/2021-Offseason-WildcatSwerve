@@ -27,6 +27,7 @@ public final class Constants {
         public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0
                         * SdsModuleConfigurations.MK3_STANDARD.getDriveReduction()
                         * SdsModuleConfigurations.MK3_STANDARD.getWheelDiameter() * Math.PI;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 0;
 
         public static final double m_kS = 0 / 12;
         public static final double m_kV = 0 / 12;

@@ -5,12 +5,12 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
-
 import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -225,8 +225,7 @@ public class Drive extends SubsystemBase {
       } catch (NullPointerException error) {
         setModuleStates(zeroStates);
       }
-    }
-    else {
+    } else {
       try {
         setModuleStatesClosedLoop(states);
       } catch (NullPointerException error) {
@@ -314,7 +313,8 @@ public class Drive extends SubsystemBase {
   }
 
   public SwerveModuleState getBackLeftState() {
-    return new SwerveModuleState(m_backLeftModule.getDriveVelocity(), Rotation2d.fromDegrees(m_backLeftModule.getSteerAngle()));
+    return new SwerveModuleState(m_backLeftModule.getDriveVelocity(),
+        Rotation2d.fromDegrees(m_backLeftModule.getSteerAngle()));
   }
 
   public SwerveModuleState getBackRightState() {
