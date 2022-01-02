@@ -13,7 +13,7 @@
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://www.linkedin.com/in/bodhaansh-ravipati-16515419b/"><img src="https://media-exp1.licdn.com/dms/image/C4D35AQFC7bKFFRzlug/profile-framedphoto-shrink_400_400/0/1610841065000?e=1641243600&v=beta&t=ra1gPfu-9JM7bp9v7eocl2qORMYpsPRuxCEYFYVOBss" width="100px;" alt=""/><br /><sub><b>Bodhaansh Ravipati</b></sub></a><br /><a href="#question-kentcdodds" title="Answering Questions">💬</a> <a href="https://github.com/all-contributors/all-contributors/commits?author=kentcdodds" title="Documentation">📖</a> <a href="https://github.com/all-contributors/all-contributors/pulls?q=is%3Apr+reviewed-by%3Akentcdodds" title="Reviewed Pull Requests">👀</a> <a href="#talk-kentcdodds" title="Talks">📢</a></td>
+    <td align="center"><a href="https://www.linkedin.com/in/bodhaansh-ravipati-16515419b/"><img src="https://media-exp1.licdn.com/dms/image/C4D35AQFC7bKFFRzlug/profile-framedphoto-shrink_400_400/0/1610841065000?e=1641243600&v=beta&t=ra1gPfu-9JM7bp9v7eocl2qORMYpsPRuxCEYFYVOBss" width="100px;" alt=""/><br /><sub><b>Bodhaansh Ravipati</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/jfmengels"><img src="https://avatars.githubusercontent.com/u/3869412?v=3?s=100" width="100px;" alt=""/><br /><sub><b>Jeroen Engels</b></sub></a><br /><a href="https://github.com/all-contributors/all-contributors/commits?author=jfmengels" title="Documentation">📖</a> <a href="https://github.com/all-contributors/all-contributors/pulls?q=is%3Apr+reviewed-by%3Ajfmengels" title="Reviewed Pull Requests">👀</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
   </tr>
 
