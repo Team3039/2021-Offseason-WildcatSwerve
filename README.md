@@ -1,4 +1,4 @@
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/Team3039/2021-Offseason-MisatoSwerve.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Team3039/2021-Offseason-MisatoSwerve/alerts/) [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/Team3039/2021-Offseason-MisatoSwerve.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Team3039/2021-Offseason-MisatoSwerve/context:java)
+[![CodeQL](https://github.com/Team3039/2021-Offseason-MisatoSwerve/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/Team3039/2021-Offseason-MisatoSwerve/actions/workflows/codeql-analysis.yml) [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/Team3039/2021-Offseason-MisatoSwerve.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Team3039/2021-Offseason-MisatoSwerve/context:java)
 
 # 2021-Offseason-MisatoSwerve
 
