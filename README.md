@@ -13,7 +13,7 @@
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://www.linkedin.com/in/bodhaansh-ravipati-16515419b/"><img src="https://media-exp1.licdn.com/dms/image/C4D35AQFC7bKFFRzlug/profile-framedphoto-shrink_400_400/0/1610841065000?e=1641243600&v=beta&t=ra1gPfu-9JM7bp9v7eocl2qORMYpsPRuxCEYFYVOBss" width="100px;" alt=""/><br /><sub><b>Bodhaansh Ravipati</b></sub></a><br /></td>
+    <td align="center"><a href="https://www.linkedin.com/in/bodhaansh-ravipati-16515419b/"><img src="https://media-exp1.licdn.com/dms/image/C4D35AQFC7bKFFRzlug/profile-framedphoto-shrink_100_100/0/1610841065000?e=1641499200&v=beta&t=3kyiPNSjkO7aO9JbFyO-4VTealizJgrXaxXg1CY4-bY" width="100px;" alt=""/><br /><sub><b>Bodhaansh Ravipati</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/MrFortez"><img src="https://avatars.githubusercontent.com/u/55511864?v=4" width="100px;" alt=""/><br /><sub><b>Brandon Fortes</b></sub></a><br/></td>
   </tr>
  <!-- markdownlint-enable -->
