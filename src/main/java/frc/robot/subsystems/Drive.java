@@ -4,19 +4,19 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.VoltageConstraints.*;
+import static frc.robot.Constants.MotionConstraints.*;
+import static frc.robot.Constants.DrivetrainCoefficients.*;
+import static frc.robot.Constants.MappingPorts.*;
+import static frc.robot.Constants.GeometricCoefficients.*;
+
 import java.util.List;
-import java.util.logging.ErrorManager;
-import java.util.logging.Handler;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
-
-import org.xml.sax.HandlerBase;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -73,16 +73,18 @@ public class Drive extends SubsystemBase {
 
   private final List<SwerveModuleClosedLoop> m_modulesClosedLoop;
 
-  private ChassisSpeeds driveChassisSpeeds;
+  private ChassisSpeeds m_chassisSpeeds;
+  private SwerveModuleState[] m_ModuleStates;
 
   private final PigeonIMU m_pigeon;
 
-  double storedYaw;
+  double m_storedYaw;
   double yaw;
-  double yawCorrection;
+  double m_yawCorrection;
 
-  boolean isHighGear;
-  boolean alternateCenter;
+  boolean m_isHighGear;
+  boolean m_alternateCenter;
+  boolean m_isOpenLoop;
 
   SwerveDriveOdometry m_odometry;
 
@@ -136,141 +138,65 @@ public class Drive extends SubsystemBase {
 
     m_modulesClosedLoop = List.of(m_frLClosedLoop, m_frRClosedLoop, m_bkLClosedLoop, m_bkRClosedLoop);
 
+    m_chassisSpeeds = new ChassisSpeeds();
+    m_ModuleStates = ZERO_STATES;
+
     m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
 
     m_odometry = new SwerveDriveOdometry(kDriveKinematics, Rotation2d.fromDegrees(getPigeon().getFusedHeading()));
 
-    isHighGear = false;
-    alternateCenter = false;
+    m_isHighGear = false;
+    m_alternateCenter = false;
+    m_isOpenLoop = false;
   }
 
-  public static SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
-    double targetAngle = placeInAppropriate0To360Scope(currentAngle.getDegrees(), desiredState.angle.getDegrees());
-    double targetSpeed = desiredState.speedMetersPerSecond;
-    double delta = targetAngle - currentAngle.getDegrees();
-    if (Math.abs(delta) > 90) {
-      targetSpeed = -targetSpeed;
-      targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
-    }
-    return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
+  public synchronized DriveControlMode getControlMode() {
+    return driveControlMode;
   }
 
-  private static double placeInAppropriate0To360Scope(double scopeReference, double newAngle) {
-    double lowerBound;
-    double upperBound;
-    double lowerOffset = scopeReference % 360;
-    if (lowerOffset >= 0) {
-      lowerBound = scopeReference - lowerOffset;
-      upperBound = scopeReference + (360 - lowerOffset);
-    } else {
-      upperBound = scopeReference - lowerOffset;
-      lowerBound = scopeReference - (360 + lowerOffset);
-    }
-    while (newAngle < lowerBound) {
-      newAngle += 360;
-    }
-    while (newAngle > upperBound) {
-      newAngle -= 360;
-    }
-    if (newAngle - scopeReference > 180) {
-      newAngle -= 360;
-    } else if (newAngle - scopeReference < -180) {
-      newAngle += 360;
-    }
-    return newAngle;
+  public synchronized void setControlMode(DriveControlMode controlMode) {
+    this.driveControlMode = controlMode;
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
-    SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, kMaxSpeedMetersPerSecond);
-
-    optimize(desiredStates[0], new Rotation2d(m_frontLeftModule.getSteerAngle()));
-    optimize(desiredStates[1], new Rotation2d(m_frontRightModule.getSteerAngle()));
-    optimize(desiredStates[2], new Rotation2d(m_backLeftModule.getSteerAngle()));
-    optimize(desiredStates[3], new Rotation2d(m_backRightModule.getSteerAngle()));
-
-    m_frontLeftModule.set(desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-        desiredStates[0].angle.getRadians());
-    m_frontRightModule.set(desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-        desiredStates[1].angle.getRadians());
-    m_backLeftModule.set(desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-        desiredStates[2].angle.getRadians());
-    m_backRightModule.set(desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-        desiredStates[3].angle.getRadians());
+    if (isOpenLoop()) {
+      m_frontLeftModule.set(desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+          desiredStates[0].angle.getRadians());
+      m_frontRightModule.set(desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+          desiredStates[1].angle.getRadians());
+      m_backLeftModule.set(desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+          desiredStates[2].angle.getRadians());
+      m_backRightModule.set(desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+          desiredStates[3].angle.getRadians());
+    }
+    else {
+      for (int i = 0; i <= 3; i++) {
+        m_modulesClosedLoop.get(i).setDesiredState(desiredStates[i], false);
+      }
+    }
   }
 
   public void drive(ChassisSpeeds chassisSpeeds, boolean isOpenLoop) {
+    m_chassisSpeeds = chassisSpeeds;
+    m_isOpenLoop = isOpenLoop;
 
-    driveChassisSpeeds = chassisSpeeds;
+    gearingConfig();
+    alternateCenterConfig();
 
-    if (isHighGear()) {
-      driveChassisSpeeds.vxMetersPerSecond *= MAX_VELOCITY_METERS_PER_SECOND;
-      driveChassisSpeeds.vyMetersPerSecond *= MAX_VELOCITY_METERS_PER_SECOND;
-      driveChassisSpeeds.omegaRadiansPerSecond *= MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
-    }
-
-    else {
-      driveChassisSpeeds.vxMetersPerSecond *= (MAX_VELOCITY_METERS_PER_SECOND - 1);
-      driveChassisSpeeds.vyMetersPerSecond *= (MAX_VELOCITY_METERS_PER_SECOND - 1);
-      driveChassisSpeeds.omegaRadiansPerSecond *= (MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND - 1);
-    }
-
-    SwerveModuleState[] states;
-
-    if (alternateCenter) {
-      states = kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds,
-          new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2));
-    } else {
-      states = kDriveKinematics.toSwerveModuleStates(driveChassisSpeeds);
-    }
-
-    if (isOpenLoop) {
-      try {
-        setModuleStates(states);
-      } 
-      catch (NullPointerException error) {
-        setModuleStates(zeroStates);
-      }
-    }
-    else {
-      try {
-        setModuleStatesClosedLoop(states);
-      }    
-      catch (NullPointerException error) {
-          System.out.println(error.getLocalizedMessage());
-          setModuleStatesClosedLoop(zeroStates);
-      }
-    }
+    setModuleStates(m_ModuleStates);
   }
 
   public void driveManualFieldCentric() {
-    if (!RobotContainer.inDeadZone(RobotContainer.getDriver().getRightXAxis())) {
-      storedYaw = yaw;
-      yawCorrection = 0;
-    }
+    updatedStoredYaw();
 
-    else {
-      if (Math.abs(RobotContainer.getDriver().getLeftYAxis()) > 0
-          || Math.abs(RobotContainer.getDriver().getLeftXAxis()) > 0) {
-        yawCorrection = calcYawStraight(storedYaw, yaw, kPHeading);
-      }
-    }
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.interpolatedLeftYAxis(),
-        RobotContainer.interpolatedLeftXAxis(), RobotContainer.interpolatedRightXAxis() + yawCorrection,
+        RobotContainer.interpolatedLeftXAxis(), RobotContainer.interpolatedRightXAxis() + m_yawCorrection,
         getGyroscopeRotation()), true);
   }
 
   public void driveManualRobotCentric() {
-    if (!RobotContainer.inDeadZone(RobotContainer.getDriver().getRightXAxis())) {
-      storedYaw = yaw;
-      yawCorrection = 0;
-    }
+    updatedStoredYaw();
 
-    else {
-      if (Math.abs(RobotContainer.getDriver().getLeftYAxis()) > 0
-          || Math.abs(RobotContainer.getDriver().getLeftXAxis()) > 0) {
-        yawCorrection = calcYawStraight(storedYaw, yaw, kPHeading);
-      }
-    }
     drive(new ChassisSpeeds(RobotContainer.interpolatedLeftYAxis(), RobotContainer.interpolatedLeftXAxis(),
         RobotContainer.interpolatedRightXAxis()), true);
   }
@@ -284,16 +210,11 @@ public class Drive extends SubsystemBase {
   }
 
   public void trackTarget(boolean lockX, boolean lockY, boolean lockTheta) {
-    if (lockX && lockY && !lockTheta) {
-      drive(ChassisSpeeds.fromFieldRelativeSpeeds(ClosedLoopFeedback.calculateHomingOutputTargetY(),
-          ClosedLoopFeedback.calculateHomingOutputTargetX(), RobotContainer.interpolatedRightXAxis(),
-          getGyroscopeRotation()), false);
-    }
-    if (!lockX && lockY && lockTheta) {
-      drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.interpolatedLeftYAxis(),
-          ClosedLoopFeedback.calculateHomingOutputTargetX(), ClosedLoopFeedback.calculateHomingOutputTargetX(),
-          getGyroscopeRotation()), false);
-    }
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(
+        lockX ? ClosedLoopFeedback.calculateHomingOutputTargetX() : RobotContainer.interpolatedLeftXAxis(),
+        lockY ? ClosedLoopFeedback.calculateHomingOutputTargetY() : RobotContainer.interpolatedLeftYAxis(),
+        lockTheta ? ClosedLoopFeedback.calculateHomingOutputTargetX() : RobotContainer.interpolatedRightXAxis(),
+        getGyroscopeRotation()), false);
   }
 
   double calcYawStraight(double targetAngle, double currentAngle, double kP) {
@@ -302,12 +223,27 @@ public class Drive extends SubsystemBase {
     return -1 * correction;
   }
 
-  public synchronized DriveControlMode getControlMode() {
-    return driveControlMode;
+  public void gearingConfig() {
+    if (m_isHighGear) {
+      m_chassisSpeeds.vxMetersPerSecond *= MAX_VELOCITY_METERS_PER_SECOND;
+      m_chassisSpeeds.vyMetersPerSecond *= MAX_VELOCITY_METERS_PER_SECOND;
+      m_chassisSpeeds.omegaRadiansPerSecond *= MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+    } else {
+      m_chassisSpeeds.vxMetersPerSecond *= (MAX_VELOCITY_METERS_PER_SECOND - 1);
+      m_chassisSpeeds.vyMetersPerSecond *= (MAX_VELOCITY_METERS_PER_SECOND - 1);
+      m_chassisSpeeds.omegaRadiansPerSecond *= (MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND - 1);
+    }
   }
 
-  public synchronized void setControlMode(DriveControlMode controlMode) {
-    this.driveControlMode = controlMode;
+  public void alternateCenterConfig() {
+    if (m_alternateCenter) {
+      m_ModuleStates = kDriveKinematics.toSwerveModuleStates(m_chassisSpeeds,
+          new Translation2d(DRIVETRAIN_WHEELBASE_METERS / 2, -DRIVETRAIN_TRACKWIDTH_METERS / 2));
+    }
+
+    else {
+      m_ModuleStates = kDriveKinematics.toSwerveModuleStates(m_chassisSpeeds);
+    }
   }
 
   public SwerveModuleState getFrontLeftState() {
@@ -360,19 +296,41 @@ public class Drive extends SubsystemBase {
   }
 
   public boolean isHighGear() {
-    return isHighGear;
+    return m_isHighGear;
   }
 
   public void setHighGear(boolean gear) {
-    isHighGear = gear;
+    m_isHighGear = gear;
   }
 
   public boolean isAlternateCenter() {
-    return alternateCenter;
+    return m_alternateCenter;
   }
 
   public void setAlternateCenter(boolean altCenter) {
-    alternateCenter = altCenter;
+    m_alternateCenter = altCenter;
+  }
+
+  public boolean isOpenLoop() {
+    return m_isOpenLoop;
+  }
+
+  public void setOpenLoop(boolean isOpenLoop) {
+    m_isOpenLoop = isOpenLoop;
+  }
+
+  public void updatedStoredYaw() {
+    if (!RobotContainer.inDeadZone(RobotContainer.getDriver().getRightXAxis())) {
+      m_storedYaw = yaw;
+      m_yawCorrection = 0;
+    }
+
+    else {
+      if (Math.abs(RobotContainer.getDriver().getLeftYAxis()) > 0
+          || Math.abs(RobotContainer.getDriver().getLeftXAxis()) > 0) {
+        m_yawCorrection = calcYawStraight(m_storedYaw, yaw, kPHeading);
+      }
+    }
   }
 
   @Override

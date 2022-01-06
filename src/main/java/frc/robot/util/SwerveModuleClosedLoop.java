@@ -1,12 +1,11 @@
 package frc.robot.util;
 
-import static frc.robot.Constants.MAX_VELOCITY_METERS_PER_SECOND;
-import static frc.robot.Constants.angleGearRatio;
-import static frc.robot.Constants.driveGearRatio;
-import static frc.robot.Constants.m_circumfrence;
-import static frc.robot.Constants.m_kA;
-import static frc.robot.Constants.m_kS;
-import static frc.robot.Constants.m_kV;
+import static frc.robot.Constants.VoltageConstraints.*;
+import static frc.robot.Constants.MotionConstraints.*;
+import static frc.robot.Constants.DrivetrainCoefficients.*;
+import static frc.robot.Constants.LimelightCoefficients.*;
+import static frc.robot.Constants.MappingPorts.*;
+import static frc.robot.Constants.GeometricCoefficients.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -43,7 +42,7 @@ public class SwerveModuleClosedLoop {
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
 
-        desiredState = Drive.optimize(desiredState, getState().angle); // Custom optimize command, since default WPILib
+        desiredState = optimize(desiredState, getState().angle); // Custom optimize command, since default WPILib
                                                                        // optimize assumes continuous controller which
                                                                        // CTRE is not
 
@@ -54,7 +53,7 @@ public class SwerveModuleClosedLoop {
 
         else {
             double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond, m_circumfrence,
-                    driveGearRatio);
+                    m_driveGearRatio);
             mDriveMotor.set(ControlMode.Velocity, velocity, DemandType.ArbitraryFeedForward,
                     feedforward.calculate(desiredState.speedMetersPerSecond));
         }
@@ -63,12 +62,12 @@ public class SwerveModuleClosedLoop {
                 ? lastAngle
                 : desiredState.angle.getDegrees(); // Prevent rotating module if speed is less then 1%. Prevents
                                                    // Jittering.
-        mAngleMotor.set(ControlMode.Position, Conversions.degreesToFalcon(angle, angleGearRatio));
+        mAngleMotor.set(ControlMode.Position, Conversions.degreesToFalcon(angle, m_angleGearRatio));
         lastAngle = angle;
     }
 
     private void resetToAbsolute() {
-        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset, angleGearRatio);
+        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset, m_angleGearRatio);
         mAngleMotor.setSelectedSensorPosition(absolutePosition);
     }
 
@@ -89,15 +88,51 @@ public class SwerveModuleClosedLoop {
         mDriveMotor.setSelectedSensorPosition(0);
     }
 
+    public static SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
+        double targetAngle = placeInAppropriate0To360Scope(currentAngle.getDegrees(), desiredState.angle.getDegrees());
+        double targetSpeed = desiredState.speedMetersPerSecond;
+        double delta = targetAngle - currentAngle.getDegrees();
+        if (Math.abs(delta) > 90) {
+          targetSpeed = -targetSpeed;
+          targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
+        }
+        return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
+    }
+
+    private static double placeInAppropriate0To360Scope(double scopeReference, double newAngle) {
+        double lowerBound;
+        double upperBound;
+        double lowerOffset = scopeReference % 360;
+        if (lowerOffset >= 0) {
+          lowerBound = scopeReference - lowerOffset;
+          upperBound = scopeReference + (360 - lowerOffset);
+        } else {
+          upperBound = scopeReference - lowerOffset;
+          lowerBound = scopeReference - (360 + lowerOffset);
+        }
+        while (newAngle < lowerBound) {
+          newAngle += 360;
+        }
+        while (newAngle > upperBound) {
+          newAngle -= 360;
+        }
+        if (newAngle - scopeReference > 180) {
+          newAngle -= 360;
+        } else if (newAngle - scopeReference < -180) {
+          newAngle += 360;
+        }
+        return newAngle;
+    }
+
     public Rotation2d getCanCoder() {
         return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
     }
 
     public SwerveModuleState getState() {
         double velocity = Conversions.falconToMPS(mDriveMotor.getSelectedSensorVelocity(), m_circumfrence,
-                driveGearRatio);
+                m_driveGearRatio);
         Rotation2d angle = Rotation2d
-                .fromDegrees(Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), angleGearRatio));
+                .fromDegrees(Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), m_angleGearRatio));
         return new SwerveModuleState(velocity, angle);
     }
 }

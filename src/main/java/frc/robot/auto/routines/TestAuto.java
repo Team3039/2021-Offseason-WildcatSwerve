@@ -4,10 +4,13 @@
 
 package frc.robot.auto.routines;
 
+import static frc.robot.Constants.DrivetrainCoefficients.kDriveKinematics;
+import static frc.robot.Constants.DrivetrainCoefficients.kPXController;
+import static frc.robot.Constants.DrivetrainCoefficients.kPYController;
+
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.robot.Constants;
 import frc.robot.auto.TrajectoryGenerator;
 import frc.robot.auto.commands.sequences.ResetRamsete;
 import frc.robot.subsystems.Drive;
@@ -25,9 +28,9 @@ public class TestAuto extends SequentialCommandGroup {
       new SwerveControllerCommand(
             TrajectoryGenerator.getInstance().getDriveTest(),
             Drive.getInstance()::getPose,
-            Constants.kDriveKinematics,
-            new PIDController(Constants.kPXController, 0, 0),
-            new PIDController(Constants.kPYController, 0, 0),
+            kDriveKinematics,
+            new PIDController(kPXController, 0, 0),
+            new PIDController(kPYController, 0, 0),
             TrajectoryGenerator.getInstance().getThetaController(),
             Drive.getInstance()::setModuleStatesClosedLoop,
             Drive.getInstance()

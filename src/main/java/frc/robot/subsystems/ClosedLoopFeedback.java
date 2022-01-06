@@ -4,11 +4,11 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.LIMELIGHT_X_OFFSET;
-import static frc.robot.Constants.LIMELIGHT_Y_OFFSET;
-import static frc.robot.Constants.kLimelightDeadZone;
-import static frc.robot.Constants.kLimelightMinCorrection;
-import static frc.robot.Constants.kPLimelightController;
+import static frc.robot.Constants.LimelightCoefficients.LIMELIGHT_X_OFFSET;
+import static frc.robot.Constants.LimelightCoefficients.LIMELIGHT_Y_OFFSET;
+import static frc.robot.Constants.LimelightCoefficients.kLimelightDeadZone;
+import static frc.robot.Constants.LimelightCoefficients.kLimelightMinCorrection;
+import static frc.robot.Constants.LimelightCoefficients.kPLimelightController;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;

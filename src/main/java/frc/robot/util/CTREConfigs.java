@@ -1,13 +1,14 @@
 package frc.robot.util;
 
+import static frc.robot.Constants.DrivetrainCoefficients.*;
+import static frc.robot.Constants.VoltageConstraints.*;
+
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
-
-import static frc.robot.Constants.*;
 
 public final class CTREConfigs {
     public TalonFXConfiguration swerveAngleFXConfig;
@@ -46,8 +47,8 @@ public final class CTREConfigs {
         swerveDriveFXConfig.slot0.kF = kFDrive;
         swerveDriveFXConfig.supplyCurrLimit = driveSupplyLimit;
         swerveDriveFXConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
-        swerveDriveFXConfig.openloopRamp = openLoopRamp;
-        swerveDriveFXConfig.closedloopRamp = closedLoopRamp;
+        swerveDriveFXConfig.openloopRamp = m_openLoopRamp;
+        swerveDriveFXConfig.closedloopRamp = m_closedLoopRamp;
 
         /* Swerve CANCoder Configuration */
         swerveCanCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
@@ -55,5 +56,4 @@ public final class CTREConfigs {
         swerveCanCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
         swerveCanCoderConfig.sensorDirection = true;
     }
-
 }

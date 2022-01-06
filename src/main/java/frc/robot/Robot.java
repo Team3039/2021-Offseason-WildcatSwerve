@@ -4,7 +4,9 @@
 
 package frc.robot;
 
-import java.util.function.Function;
+import static frc.robot.Constants.DrivetrainCoefficients.kDriveKinematics;
+import static frc.robot.Constants.DrivetrainCoefficients.kPXController;
+import static frc.robot.Constants.DrivetrainCoefficients.kPYController;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -19,12 +21,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-
 import frc.robot.auto.TrajectoryGenerator;
 import frc.robot.auto.commands.sequences.ResetRamsete;
 import frc.robot.auto.routines.DoNothing;
 import frc.robot.auto.routines.TestAuto;
-import frc.robot.commands.SetHighGear;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveControlMode;
 
@@ -71,9 +71,9 @@ public class Robot extends TimedRobot {
       new ResetRamsete().andThen(
         new SwerveControllerCommand(TrajectoryGenerator.getInstance().getPlannerTest(),
           Drive.getInstance()::getPose,
-          Constants.kDriveKinematics,
-          new PIDController(Constants.kPXController, 0, 0),
-          new PIDController(Constants.kPYController, 0, 0),
+          kDriveKinematics,
+          new PIDController(kPXController, 0, 0),
+          new PIDController(kPYController, 0, 0),
           TrajectoryGenerator.getInstance().getThetaController(),
           Drive.getInstance()::setModuleStatesClosedLoop,
           Drive.getInstance()
@@ -95,9 +95,13 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     SmartDashboard.putNumber("Time Remaining", Timer.getMatchTime());
+    SmartDashboard.putBoolean("System Active", RobotController.isSysActive());
     SmartDashboard.updateValues();
 
     m_Field2d.setRobotPose(m_robotContainer.m_drive.getPose());
+
+    if (RobotController.getBatteryVoltage() < 10)
+      RobotContainer.outputTelemetry("CHANGE THE BATTERY !!!!");
   }
 
   @Override

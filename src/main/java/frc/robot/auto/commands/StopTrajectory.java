@@ -4,8 +4,9 @@
 
 package frc.robot.auto.commands;
 
+import static frc.robot.Constants.DrivetrainCoefficients.ZERO_STATES;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drive;
 
@@ -19,7 +20,7 @@ public class StopTrajectory extends CommandBase {
   @Override
   public void initialize() {
     RobotContainer.outputTelemetry("Stopping Trajectory");
-    Drive.getInstance().setModuleStates(Constants.zeroStates);
+    Drive.getInstance().setModuleStates(ZERO_STATES);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
