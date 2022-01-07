@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.auto.TrajectoryGenerator;
-import frc.robot.auto.commands.sequences.ResetRamsete;
+import frc.robot.auto.commands.sequences.ResetTrajectory;
 import frc.robot.auto.routines.DoNothing;
 import frc.robot.auto.routines.TestAuto;
 import frc.robot.subsystems.Drive;
@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
     autonTaskChooser.addOption("Test Auto", new TestAuto());
     autonTaskChooser.addOption("Do Nothing", new DoNothing());
     autonTaskChooser.addOption("Planner Test", new SequentialCommandGroup(
-      new ResetRamsete().andThen(
+      new ResetTrajectory().andThen(
         new SwerveControllerCommand(TrajectoryGenerator.getInstance().getPlannerTest(),
           Drive.getInstance()::getPose,
           kDriveKinematics,
@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
           Drive.getInstance()::setModuleStatesClosedLoop,
           Drive.getInstance()
         ))).andThen(
-          new ResetRamsete()
+          new ResetTrajectory()
       ));
 
     SmartDashboard.putData("Autonomous Selector", autonTaskChooser);

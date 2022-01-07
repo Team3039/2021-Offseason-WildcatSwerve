@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.auto.TrajectoryGenerator;
-import frc.robot.auto.commands.sequences.ResetRamsete;
+import frc.robot.auto.commands.sequences.ResetTrajectory;
 import frc.robot.subsystems.Drive;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -24,7 +24,7 @@ public class TestAuto extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ResetRamsete(),
+      new ResetTrajectory(),
       new SwerveControllerCommand(
             TrajectoryGenerator.getInstance().getDriveTest(),
             Drive.getInstance()::getPose,
@@ -35,7 +35,7 @@ public class TestAuto extends SequentialCommandGroup {
             Drive.getInstance()::setModuleStatesClosedLoop,
             Drive.getInstance()
             ),
-      new ResetRamsete()
+      new ResetTrajectory()
     );
   }
 }
