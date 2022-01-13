@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import frc.robot.commands.SetAlternateCenter;
-import frc.robot.commands.SetHighGear;
+import frc.robot.commands.ToggleAlternateCenter;
+import frc.robot.commands.ToggleGearing;
 import frc.robot.commands.ToggleFieldRelative;
 import frc.robot.commands.ZeroGyroscope;
 import frc.robot.controllers.InterpolatedPS4Gamepad;
@@ -52,10 +52,10 @@ public class RobotContainer {
     driverX.toggleWhenPressed(new ToggleFieldRelative());
 
     Button driverR1 = getDriver().getR1();
-    driverR1.toggleWhenPressed(new SetHighGear(true));
+    driverR1.toggleWhenPressed(new ToggleGearing(true));
 
     Button driverL1 = getDriver().getL1();
-    driverL1.toggleWhenPressed(new SetAlternateCenter(true));
+    driverL1.toggleWhenPressed(new ToggleAlternateCenter(true));
   }
 
   /**
