@@ -7,10 +7,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
 
-public class SetAlternateCenter extends CommandBase {
+public class ToggleAlternateCenter extends CommandBase {
   /** Creates a new SetAlternateCenter. */
   boolean isAltCenter;
-  public SetAlternateCenter(boolean isAltCenter) {
+  public ToggleAlternateCenter(boolean isAltCenter) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.isAltCenter = isAltCenter;
   }
