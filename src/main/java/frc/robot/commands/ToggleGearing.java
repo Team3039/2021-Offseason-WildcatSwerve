@@ -7,10 +7,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
 
-public class SetHighGear extends CommandBase {
+public class ToggleGearing extends CommandBase {
   /** Creates a new SetHighGear. */
   boolean isHighGear;
-  public SetHighGear(boolean isHighGear) {
+  public ToggleGearing(boolean isHighGear) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.isHighGear = isHighGear;
   }
