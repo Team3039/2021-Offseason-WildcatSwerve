@@ -9,30 +9,35 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveControlMode;
 
 public class SetDriveControlMode extends CommandBase {
-  /** Creates a new SetDriveControlMode. */
-  DriveControlMode controlMode;
-  public SetDriveControlMode(DriveControlMode controlMode) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.controlMode = controlMode;
-  }
+    /**
+     * Creates a new SetDriveControlMode.
+     */
+    DriveControlMode controlMode;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    Drive.getInstance().setControlMode(controlMode);
-  }
+    public SetDriveControlMode(DriveControlMode controlMode) {
+        // Use addRequirements() here to declare subsystem dependencies.
+        this.controlMode = controlMode;
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        Drive.getInstance().setControlMode(controlMode);
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return true;
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

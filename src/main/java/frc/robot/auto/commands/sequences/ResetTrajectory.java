@@ -13,13 +13,15 @@ import frc.robot.auto.commands.StopTrajectory;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ResetTrajectory extends SequentialCommandGroup {
-  /** Creates a new ResetRamsete. */
-  public ResetTrajectory() {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
-      new StopTrajectory(),
-      new ResetOdometry(TrajectoryGenerator.getInstance().getLastTrajectory().getInitialPose())
-    );
-  }
+    /**
+     * Creates a new ResetRamsete.
+     */
+    public ResetTrajectory() {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+        addCommands(
+                new StopTrajectory(),
+                new ResetOdometry(TrajectoryGenerator.getInstance().getLastTrajectory().getInitialPose())
+        );
+    }
 }

@@ -11,15 +11,10 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
 
 public final class CTREConfigs {
+    public static CTREConfigs INSTANCE = new CTREConfigs();
     public TalonFXConfiguration swerveAngleFXConfig;
     public TalonFXConfiguration swerveDriveFXConfig;
     public CANCoderConfiguration swerveCanCoderConfig;
-
-    public static CTREConfigs INSTANCE = new CTREConfigs();
-
-    public static CTREConfigs getInstance() {
-        return INSTANCE;
-    }
 
     public CTREConfigs() {
         swerveAngleFXConfig = new TalonFXConfiguration();
@@ -55,5 +50,9 @@ public final class CTREConfigs {
         swerveCanCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
         swerveCanCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
         swerveCanCoderConfig.sensorDirection = true;
+    }
+
+    public static CTREConfigs getInstance() {
+        return INSTANCE;
     }
 }

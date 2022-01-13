@@ -10,35 +10,37 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drive;
 
 public class ResetOdometry extends CommandBase {
-  /** Creates a new ResetOdometry. */
-  Pose2d pose2d;
+    /**
+     * Creates a new ResetOdometry.
+     */
+    Pose2d pose2d;
 
-  public ResetOdometry(Pose2d pose2d) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.pose2d = pose2d;
-  }
+    public ResetOdometry(Pose2d pose2d) {
+        // Use addRequirements() here to declare subsystem dependencies.
+        this.pose2d = pose2d;
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    RobotContainer.outputTelemetry("Resetting Odometry");
-    Drive.getInstance().resetOdometry(pose2d);
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        RobotContainer.outputTelemetry("Resetting Odometry");
+        Drive.getInstance().resetOdometry(pose2d);
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    RobotContainer.outputTelemetry("Reset Odometry");
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        RobotContainer.outputTelemetry("Reset Odometry");
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return true;
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

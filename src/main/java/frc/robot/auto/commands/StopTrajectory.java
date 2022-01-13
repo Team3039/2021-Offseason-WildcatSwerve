@@ -4,38 +4,41 @@
 
 package frc.robot.auto.commands;
 
-import static frc.robot.Constants.DrivetrainCoefficients.ZERO_STATES;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drive;
 
+import static frc.robot.Constants.DrivetrainCoefficients.ZERO_STATES;
+
 public class StopTrajectory extends CommandBase {
-  /** Creates a new StopTrajectory. */
-  public StopTrajectory() {
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
+    /**
+     * Creates a new StopTrajectory.
+     */
+    public StopTrajectory() {
+        // Use addRequirements() here to declare subsystem dependencies.
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    RobotContainer.outputTelemetry("Stopping Trajectory");
-    Drive.getInstance().setModuleStates(ZERO_STATES);
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        RobotContainer.outputTelemetry("Stopping Trajectory");
+        Drive.getInstance().setModuleStates(ZERO_STATES);
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    RobotContainer.outputTelemetry("Trajectory Stopped");
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        RobotContainer.outputTelemetry("Trajectory Stopped");
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return true;
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

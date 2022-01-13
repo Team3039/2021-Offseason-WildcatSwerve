@@ -1,10 +1,6 @@
 package frc.robot.util;
 
-import static frc.robot.Constants.VoltageConstraints.*;
 import static frc.robot.Constants.MotionConstraints.*;
-import static frc.robot.Constants.DrivetrainCoefficients.*;
-import static frc.robot.Constants.LimelightCoefficients.*;
-import static frc.robot.Constants.MappingPorts.*;
 import static frc.robot.Constants.GeometricCoefficients.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -15,13 +11,12 @@ import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-import frc.robot.subsystems.Drive;
 
 public class SwerveModuleClosedLoop {
-    private double angleOffset;
-    private TalonFX mAngleMotor;
-    private TalonFX mDriveMotor;
-    private CANCoder angleEncoder;
+    private final double angleOffset;
+    private final TalonFX mAngleMotor;
+    private final TalonFX mDriveMotor;
+    private final CANCoder angleEncoder;
     private double lastAngle;
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(m_kS, m_kV, m_kA);
@@ -52,7 +47,7 @@ public class SwerveModuleClosedLoop {
         }
 
         else {
-            double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond, m_circumfrence,
+            double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond, m_circumference,
                     m_driveGearRatio);
             mDriveMotor.set(ControlMode.Velocity, velocity, DemandType.ArbitraryFeedForward,
                     feedforward.calculate(desiredState.speedMetersPerSecond));
@@ -129,7 +124,7 @@ public class SwerveModuleClosedLoop {
     }
 
     public SwerveModuleState getState() {
-        double velocity = Conversions.falconToMPS(mDriveMotor.getSelectedSensorVelocity(), m_circumfrence,
+        double velocity = Conversions.falconToMPS(mDriveMotor.getSelectedSensorVelocity(), m_circumference,
                 m_driveGearRatio);
         Rotation2d angle = Rotation2d
                 .fromDegrees(Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), m_angleGearRatio));

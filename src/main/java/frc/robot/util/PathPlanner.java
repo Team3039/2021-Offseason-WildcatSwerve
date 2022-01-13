@@ -17,7 +17,7 @@ public class PathPlanner {
 
     /**
      * Load a path file from storage
-     * 
+     *
      * @param name     The name of the path to load
      * @param maxVel   Max velocity of the path
      * @param maxAccel Max velocity of the path
@@ -103,7 +103,7 @@ public class PathPlanner {
 
     /**
      * Load a path from storage
-     * 
+     *
      * @param name     The name of the path to load
      * @param maxVel   Max velocity of the path
      * @param maxAccel Max velocity of the path

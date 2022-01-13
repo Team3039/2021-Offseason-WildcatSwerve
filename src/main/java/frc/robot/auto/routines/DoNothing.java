@@ -11,10 +11,12 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DoNothing extends SequentialCommandGroup {
-  /** Creates a new DoNothing. */
-  public DoNothing() {
-    addCommands(
-      new PrintCommand("Autonomous Completed")
-    );
-  }
+    /**
+     * Creates a new DoNothing.
+     */
+    public DoNothing() {
+        addCommands(
+                new PrintCommand("Autonomous Completed")
+        );
+    }
 }

@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.ToggleAlternateCenter;
-import frc.robot.commands.ToggleGearing;
 import frc.robot.commands.ToggleFieldRelative;
+import frc.robot.commands.ToggleGearing;
 import frc.robot.commands.ZeroGyroscope;
 import frc.robot.controllers.InterpolatedPS4Gamepad;
 import frc.robot.subsystems.Drive;
@@ -24,80 +24,74 @@ import frc.robot.subsystems.Drive;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  public final Drive m_drive = new Drive();
+    public final static InterpolatedPS4Gamepad m_driver = new InterpolatedPS4Gamepad(0);
+    // The robot's subsystems and commands are defined here...
+    public final Drive m_drive = new Drive();
 
-  public final static InterpolatedPS4Gamepad m_driver = new InterpolatedPS4Gamepad(0);
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
+    public RobotContainer() {
+        // Configure the button bindings
+        configureButtonBindings();
+    }
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  public RobotContainer() {
-    // Configure the button bindings
-    configureButtonBindings();
-  }
+    public static InterpolatedPS4Gamepad getDriver() {
+        return m_driver;
+    }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by instantiating a {@link GenericHID} or one of its subclasses
-   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
-   * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
-    // Back button zeros the gyroscope
-    Button driverPadButton = getDriver().getButtonPad();
-    driverPadButton.whenPressed(new ZeroGyroscope());
+    public static boolean inDeadZone(double axis) {
+        return (axis > -0.05) && (axis < 0.05);
+    }
 
-    Button driverX = getDriver().getButtonX();
-    driverX.toggleWhenPressed(new ToggleFieldRelative());
+    public static boolean isCeiling(double axis) {
+        return axis >= 0.9;
+    }
 
-    Button driverR1 = getDriver().getR1();
-    driverR1.toggleWhenPressed(new ToggleGearing(true));
+    public static double interpolatedLeftYAxis() {
+        return m_driver.interpolatedLeftYAxis();
+    }
 
-    Button driverL1 = getDriver().getL1();
-    driverL1.toggleWhenPressed(new ToggleAlternateCenter(true));
-  }
+    public static double interpolatedLeftXAxis() {
+        return m_driver.interpolatedLeftXAxis();
+    }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return new InstantCommand();
-  }
+    public static double interpolatedRightXAxis() {
+        return m_driver.interpolatedRightXAxis();
+    }
 
-  public static InterpolatedPS4Gamepad getDriver() {
-    return m_driver;
-  }
+    public static void outputTelemetry(String telemetry) {
+        System.out.println("System Telemetry :: " + telemetry);
+    }
 
-  public static boolean inDeadZone(double axis) {
-    if ((axis > -0.05) && (axis < 0.05))
-      return true;
-    return false;
-  }
+    /**
+     * Use this method to define your button->command mappings. Buttons can be
+     * created by instantiating a {@link GenericHID} or one of its subclasses
+     * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
+     * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
+    private void configureButtonBindings() {
+        // Back button zeros the gyroscope
+        Button driverPadButton = getDriver().getButtonPad();
+        driverPadButton.whenPressed(new ZeroGyroscope());
 
-  public static boolean isCeiling(double axis) {
-    if (axis >= 0.9)
-      return true;
-    return false;
-  }
+        Button driverX = getDriver().getButtonX();
+        driverX.toggleWhenPressed(new ToggleFieldRelative());
 
-  public static double interpolatedLeftYAxis() {
-   return m_driver.interpolatedLeftYAxis();
-  }
+        Button driverR1 = getDriver().getR1();
+        driverR1.toggleWhenPressed(new ToggleGearing(true));
 
-  public static double interpolatedLeftXAxis() {
-   return m_driver.interpolatedLeftXAxis();
-  }
+        Button driverL1 = getDriver().getL1();
+        driverL1.toggleWhenPressed(new ToggleAlternateCenter(true));
+    }
 
-  public static double interpolatedRightXAxis() {
-   return m_driver.interpolatedRightXAxis();
-  }
-
-  public static void outputTelemetry(String telemetry) {
-    if (!telemetry.equals(null))
-      System.out.println("System Telemetry :: " + telemetry);
-  }
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        // An ExampleCommand will run in autonomous
+        return new InstantCommand();
+    }
 }

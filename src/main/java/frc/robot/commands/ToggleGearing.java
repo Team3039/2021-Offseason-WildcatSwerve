@@ -8,32 +8,36 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
 
 public class ToggleGearing extends CommandBase {
-  /** Creates a new SetHighGear. */
-  boolean isHighGear;
-  public ToggleGearing(boolean isHighGear) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.isHighGear = isHighGear;
-  }
+    /**
+     * Creates a new SetHighGear.
+     */
+    boolean isHighGear;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    Drive.getInstance().setHighGear(isHighGear);
-  }
+    public ToggleGearing(boolean isHighGear) {
+        // Use addRequirements() here to declare subsystem dependencies.
+        this.isHighGear = isHighGear;
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        Drive.getInstance().setHighGear(isHighGear);
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    Drive.getInstance().setHighGear(!isHighGear);
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return true;
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        Drive.getInstance().setHighGear(!isHighGear);
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

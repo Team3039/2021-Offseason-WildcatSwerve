@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.DrivetrainCoefficients.kDriveKinematics;
-import static frc.robot.Constants.DrivetrainCoefficients.kPXController;
-import static frc.robot.Constants.DrivetrainCoefficients.kPYController;
-
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -16,17 +12,15 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.auto.TrajectoryGenerator;
 import frc.robot.auto.commands.sequences.ResetTrajectory;
 import frc.robot.auto.routines.DoNothing;
 import frc.robot.auto.routines.TestAuto;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveControlMode;
+
+import static frc.robot.Constants.DrivetrainCoefficients.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -37,126 +31,128 @@ import frc.robot.subsystems.Drive.DriveControlMode;
  */
 public class Robot extends TimedRobot {
 
-  Timer m_timer = new Timer();
+    private final Drive drive = Drive.getInstance();
+    public SendableChooser<Command> autonTaskChooser;
+    public Field2d m_Field2d;
+    Timer m_timer = new Timer();
+    private Command m_autonomousCommand;
+    private RobotContainer m_robotContainer;
 
-  private Command m_autonomousCommand;
+    /**
+     * This function is run when the robot is first started up and should be used
+     * for any initialization code.
+     */
+    @Override
+    public void robotInit() {
+        // Instantiate our RobotContainer. This will perform all our button bindings,
+        // and put our
+        // autonomous chooser on the dashboard.
+        m_robotContainer = new RobotContainer();
 
-  private RobotContainer m_robotContainer;
-  private Drive drive = Drive.getInstance();
+        Drive.getInstance().resetOdometry(new Pose2d());
+        TrajectoryGenerator.getInstance().thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-  public SendableChooser<Command> autonTaskChooser;
+        autonTaskChooser = new SendableChooser<>();
 
-  public Field2d m_Field2d;
+        autonTaskChooser.setDefaultOption("Select Routine", new PrintCommand("Autonomous Routine Not Selected"));
+        autonTaskChooser.addOption("Test Auto", new TestAuto());
+        autonTaskChooser.addOption("Do Nothing", new DoNothing());
+        autonTaskChooser.addOption("Planner Test", new SequentialCommandGroup(
+                new ResetTrajectory().andThen(
+                        new SwerveControllerCommand(TrajectoryGenerator.getInstance().getPlannerTest(),
+                                Drive.getInstance()::getPose,
+                                kDriveKinematics,
+                                new PIDController(kPXController, 0, 0),
+                                new PIDController(kPYController, 0, 0),
+                                TrajectoryGenerator.getInstance().getThetaController(),
+                                Drive.getInstance()::setModuleStatesClosedLoop,
+                                Drive.getInstance()
+                        ))).andThen(
+                new ResetTrajectory()
+        ));
 
-  /**
-   * This function is run when the robot is first started up and should be used
-   * for any initialization code.
-   */
-  @Override
-  public void robotInit() {
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our
-    // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+        SmartDashboard.putData("Autonomous Selector", autonTaskChooser);
 
-    Drive.getInstance().resetOdometry(new Pose2d());
-    TrajectoryGenerator.getInstance().thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        m_Field2d = new Field2d();
+        SmartDashboard.putData("Field", m_Field2d);
 
-    autonTaskChooser = new SendableChooser<>();
-
-    autonTaskChooser.setDefaultOption("Select Routine", new PrintCommand("Autonomous Routine Not Selected"));
-    autonTaskChooser.addOption("Test Auto", new TestAuto());
-    autonTaskChooser.addOption("Do Nothing", new DoNothing());
-    autonTaskChooser.addOption("Planner Test", new SequentialCommandGroup(
-      new ResetTrajectory().andThen(
-        new SwerveControllerCommand(TrajectoryGenerator.getInstance().getPlannerTest(),
-          Drive.getInstance()::getPose,
-          kDriveKinematics,
-          new PIDController(kPXController, 0, 0),
-          new PIDController(kPYController, 0, 0),
-          TrajectoryGenerator.getInstance().getThetaController(),
-          Drive.getInstance()::setModuleStatesClosedLoop,
-          Drive.getInstance()
-        ))).andThen(
-          new ResetTrajectory()
-      ));
-
-    SmartDashboard.putData("Autonomous Selector", autonTaskChooser);
-
-    m_Field2d = new Field2d();
-    SmartDashboard.putData("Field", m_Field2d);
-
-    // UsbCamera usbCamera = CameraServer.getInstance().startAutomaticCapture();
-    // usbCamera.setVideoMode(VideoMode.PixelFormat.kYUYV, 320, 180, 60);
-  }
-
-  @Override
-  public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
-
-    SmartDashboard.putNumber("Time Remaining", Timer.getMatchTime());
-    SmartDashboard.putBoolean("System Active", RobotController.isSysActive());
-    SmartDashboard.updateValues();
-
-    m_Field2d.setRobotPose(m_robotContainer.m_drive.getPose());
-
-    if (RobotController.getBatteryVoltage() < 10)
-      RobotContainer.outputTelemetry("CHANGE THE BATTERY !!!!");
-  }
-
-  @Override
-  public void disabledInit() {
-  }
-
-  @Override
-  public void disabledPeriodic() {
-  }
-
-  @Override
-  public void autonomousInit() {
-    Drive.getInstance().setControlMode(DriveControlMode.PATH_FOLLOWING);
-
-    m_autonomousCommand = autonTaskChooser.getSelected();
-
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+        // UsbCamera usbCamera = CameraServer.getInstance().startAutomaticCapture();
+        // usbCamera.setVideoMode(VideoMode.PixelFormat.kYUYV, 320, 180, 60);
     }
-  }
 
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {
-  }
+    @Override
+    public void robotPeriodic() {
+        CommandScheduler.getInstance().run();
 
-  @Override
-  public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
+        SmartDashboard.putNumber("Time Remaining", Timer.getMatchTime());
+        SmartDashboard.putBoolean("System Active", RobotController.isSysActive());
+        SmartDashboard.updateValues();
 
-    m_timer.start();
+        m_Field2d.setRobotPose(m_robotContainer.m_drive.getPose());
 
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+        if (RobotController.getBatteryVoltage() < 10)
+            RobotContainer.outputTelemetry("CHANGE THE BATTERY !!!!");
     }
-    
-    drive.setControlMode(DriveControlMode.JOYSTICK_FIELD_CENTRIC);
-  }
 
-  /** This function is called periodically during operator control. */
-  @Override
-  public void teleopPeriodic() {
-  }
+    @Override
+    public void disabledInit() {
+    }
 
-  @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-  }
+    @Override
+    public void disabledPeriodic() {
+    }
 
-  /** This function is called periodically during test mode. */
-  @Override
-  public void testPeriodic() {
-  }
+    @Override
+    public void autonomousInit() {
+        Drive.getInstance().setControlMode(DriveControlMode.PATH_FOLLOWING);
+
+        m_autonomousCommand = autonTaskChooser.getSelected();
+
+        if (m_autonomousCommand != null) {
+            m_autonomousCommand.schedule();
+        }
+    }
+
+    /**
+     * This function is called periodically during autonomous.
+     */
+    @Override
+    public void autonomousPeriodic() {
+    }
+
+    @Override
+    public void teleopInit() {
+        // This makes sure that the autonomous stops running when
+        // teleop starts running. If you want the autonomous to
+        // continue until interrupted by another command, remove
+        // this line or comment it out.
+
+        m_timer.start();
+
+        if (m_autonomousCommand != null) {
+            m_autonomousCommand.cancel();
+        }
+
+        drive.setControlMode(DriveControlMode.JOYSTICK_FIELD_CENTRIC);
+    }
+
+    /**
+     * This function is called periodically during operator control.
+     */
+    @Override
+    public void teleopPeriodic() {
+    }
+
+    @Override
+    public void testInit() {
+        // Cancels all running commands at the start of test mode.
+        CommandScheduler.getInstance().cancelAll();
+    }
+
+    /**
+     * This function is called periodically during test mode.
+     */
+    @Override
+    public void testPeriodic() {
+    }
 }
