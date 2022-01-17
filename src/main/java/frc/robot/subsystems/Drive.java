@@ -7,8 +7,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
-import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
@@ -16,7 +14,6 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,16 +28,15 @@ import static frc.robot.Constants.GeometricCoefficients.DRIVETRAIN_WHEELBASE_MET
 import static frc.robot.Constants.MappingPorts.*;
 import static frc.robot.Constants.MotionConstraints.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
 import static frc.robot.Constants.MotionConstraints.MAX_VELOCITY_METERS_PER_SECOND;
-import static frc.robot.Constants.VoltageConstraints.MAX_VOLTAGE;
 
 public class Drive extends SubsystemBase {
 
     private final static Drive INSTANCE = new Drive();
 
-    private final SwerveModule m_frontLeftModule;
-    private final SwerveModule m_frontRightModule;
-    private final SwerveModule m_backLeftModule;
-    private final SwerveModule m_backRightModule;
+    private final SwerveModuleClosedLoop m_frontLeftModule;
+    private final SwerveModuleClosedLoop m_frontRightModule;
+    private final SwerveModuleClosedLoop m_backLeftModule;
+    private final SwerveModuleClosedLoop m_backRightModule;
 
     private final List<SwerveModuleClosedLoop> m_modulesClosedLoop;
 
@@ -77,52 +73,32 @@ public class Drive extends SubsystemBase {
     public Drive() {
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
-        m_frontLeftModule = Mk3SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
-                Mk3SwerveModuleHelper.GearRatio.STANDARD, FRONT_LEFT_MODULE_DRIVE_MOTOR, FRONT_LEFT_MODULE_STEER_MOTOR,
-                FRONT_LEFT_MODULE_STEER_ENCODER, FRONT_LEFT_MODULE_STEER_OFFSET);
-
         m_frontLeftDrive = new TalonFX(FRONT_LEFT_MODULE_DRIVE_MOTOR);
         m_frontLeftSteer = new TalonFX(FRONT_LEFT_MODULE_STEER_MOTOR);
         m_frontLeftCanCoder = new CANCoder(FRONT_LEFT_MODULE_STEER_ENCODER);
-
-        m_frontRightModule = Mk3SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
-                Mk3SwerveModuleHelper.GearRatio.STANDARD, FRONT_RIGHT_MODULE_DRIVE_MOTOR, FRONT_RIGHT_MODULE_STEER_MOTOR,
-                FRONT_RIGHT_MODULE_STEER_ENCODER, FRONT_RIGHT_MODULE_STEER_OFFSET);
 
         m_frontRightDrive = new TalonFX(FRONT_RIGHT_MODULE_DRIVE_MOTOR);
         m_frontRightSteer = new TalonFX(FRONT_RIGHT_MODULE_DRIVE_MOTOR);
         m_frontRightCanCoder = new CANCoder(FRONT_RIGHT_MODULE_STEER_ENCODER);
 
-        m_backLeftModule = Mk3SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
-                Mk3SwerveModuleHelper.GearRatio.STANDARD, BACK_LEFT_MODULE_DRIVE_MOTOR, BACK_LEFT_MODULE_STEER_MOTOR,
-                BACK_LEFT_MODULE_STEER_ENCODER, BACK_LEFT_MODULE_STEER_OFFSET);
-
         m_backLeftDrive = new TalonFX(BACK_LEFT_MODULE_DRIVE_MOTOR);
         m_backLeftSteer = new TalonFX(BACK_LEFT_MODULE_STEER_MOTOR);
         m_backLeftCanCoder = new CANCoder(BACK_LEFT_MODULE_STEER_ENCODER);
-
-        m_backRightModule = Mk3SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
-                Mk3SwerveModuleHelper.GearRatio.STANDARD, BACK_RIGHT_MODULE_DRIVE_MOTOR, BACK_RIGHT_MODULE_STEER_MOTOR,
-                BACK_RIGHT_MODULE_STEER_ENCODER, BACK_RIGHT_MODULE_STEER_OFFSET);
 
         m_backRightDrive = new TalonFX(BACK_RIGHT_MODULE_DRIVE_MOTOR);
         m_backRightSteer = new TalonFX(BACK_RIGHT_MODULE_STEER_MOTOR);
         m_backRightCanCoder = new CANCoder(BACK_RIGHT_MODULE_STEER_ENCODER);
 
-        SwerveModuleClosedLoop m_frLClosedLoop = new SwerveModuleClosedLoop(m_frontLeftDrive, m_frontLeftSteer, m_frontLeftCanCoder,
+        m_frontLeftModule = new SwerveModuleClosedLoop(m_frontLeftDrive, m_frontLeftSteer, m_frontLeftCanCoder,
                 FRONT_LEFT_MODULE_STEER_OFFSET);
-        SwerveModuleClosedLoop m_frRClosedLoop = new SwerveModuleClosedLoop(m_frontRightDrive, m_frontRightSteer, m_frontRightCanCoder,
+        m_frontRightModule = new SwerveModuleClosedLoop(m_frontRightDrive, m_frontRightSteer, m_frontRightCanCoder,
                 FRONT_RIGHT_MODULE_STEER_OFFSET);
-        SwerveModuleClosedLoop m_bkLClosedLoop = new SwerveModuleClosedLoop(m_backLeftDrive, m_backLeftSteer, m_backLeftCanCoder,
+        m_backLeftModule = new SwerveModuleClosedLoop(m_backLeftDrive, m_backLeftSteer, m_backLeftCanCoder,
                 BACK_LEFT_MODULE_STEER_OFFSET);
-        SwerveModuleClosedLoop m_bkRClosedLoop = new SwerveModuleClosedLoop(m_backRightDrive, m_backRightSteer, m_backRightCanCoder,
+        m_backRightModule = new SwerveModuleClosedLoop(m_backRightDrive, m_backRightSteer, m_backRightCanCoder,
                 BACK_RIGHT_MODULE_STEER_OFFSET);
 
-        m_modulesClosedLoop = List.of(m_frLClosedLoop, m_frRClosedLoop, m_bkLClosedLoop, m_bkRClosedLoop);
+        m_modulesClosedLoop = List.of(m_frontLeftModule, m_frontRightModule, m_backLeftModule, m_backRightModule);
 
         m_chassisSpeeds = new ChassisSpeeds();
         m_ModuleStates = ZERO_STATES;
@@ -150,15 +126,13 @@ public class Drive extends SubsystemBase {
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         if (isOpenLoop()) {
-            m_frontLeftModule.set(desiredStates[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                    desiredStates[0].angle.getRadians());
-            m_frontRightModule.set(desiredStates[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                    desiredStates[1].angle.getRadians());
-            m_backLeftModule.set(desiredStates[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                    desiredStates[2].angle.getRadians());
-            m_backRightModule.set(desiredStates[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                    desiredStates[3].angle.getRadians());
-        } else {
+            m_frontLeftModule.setDesiredState(desiredStates[0],
+                    true);
+            m_frontRightModule.setDesiredState(desiredStates[1], true);
+            m_backLeftModule.setDesiredState(desiredStates[2], true);
+            m_backRightModule.setDesiredState(desiredStates[3], true);
+        }
+        else {
             for (int i = 0; i <= 3; i++) {
                 m_modulesClosedLoop.get(i).setDesiredState(desiredStates[i], false);
             }
@@ -234,23 +208,19 @@ public class Drive extends SubsystemBase {
     }
 
     public SwerveModuleState getFrontLeftState() {
-        return new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
-                Rotation2d.fromDegrees(m_frontLeftModule.getSteerAngle()));
+        return m_frontLeftModule.getState();
     }
 
     public SwerveModuleState getFrontRightState() {
-        return new SwerveModuleState(m_frontRightModule.getDriveVelocity(),
-                Rotation2d.fromDegrees(m_frontRightModule.getSteerAngle()));
+        return m_frontRightModule.getState();
     }
 
     public SwerveModuleState getBackLeftState() {
-        return new SwerveModuleState(m_backLeftModule.getDriveVelocity(),
-                Rotation2d.fromDegrees(m_backLeftModule.getSteerAngle()));
+        return m_backLeftModule.getState();
     }
 
     public SwerveModuleState getBackRightState() {
-        return new SwerveModuleState(m_backRightModule.getDriveVelocity(),
-                Rotation2d.fromDegrees(m_backRightModule.getSteerAngle()));
+        return m_backRightModule.getState();
     }
 
     public PigeonIMU getPigeon() {
@@ -307,15 +277,16 @@ public class Drive extends SubsystemBase {
     }
 
     public void updatedStoredYaw() {
-        if (!RobotContainer.inDeadZone(RobotContainer.getDriver().getRightXAxis())) {
-            m_storedYaw = yaw;
-            m_yawCorrection = 0;
-        } else {
-            if (Math.abs(RobotContainer.getDriver().getLeftYAxis()) > 0
-                    || Math.abs(RobotContainer.getDriver().getLeftXAxis()) > 0) {
-                m_yawCorrection = calcYawStraight(m_storedYaw, yaw);
-            }
-        }
+//        if (!RobotContainer.inDeadZone(RobotContainer.getDriver().getRightXAxis())) {
+//            m_storedYaw = yaw;
+//            m_yawCorrection = 0;
+//        } else {
+//            if (Math.abs(RobotContainer.getDriver().getLeftYAxis()) > 0
+//                    || Math.abs(RobotContainer.getDriver().getLeftXAxis()) > 0) {
+//                m_yawCorrection = calcYawStraight(m_storedYaw, yaw);
+//            }
+//        }
+        m_yawCorrection = 0;
     }
 
     @Override

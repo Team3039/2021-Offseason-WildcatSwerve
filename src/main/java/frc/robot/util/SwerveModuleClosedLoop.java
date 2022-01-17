@@ -1,7 +1,12 @@
 package frc.robot.util;
 
-import static frc.robot.Constants.MotionConstraints.*;
-import static frc.robot.Constants.GeometricCoefficients.*;
+import static frc.robot.Constants.GeometricCoefficients.m_angleGearRatio;
+import static frc.robot.Constants.GeometricCoefficients.m_circumference;
+import static frc.robot.Constants.GeometricCoefficients.m_driveGearRatio;
+import static frc.robot.Constants.GeometricCoefficients.m_kA;
+import static frc.robot.Constants.GeometricCoefficients.m_kS;
+import static frc.robot.Constants.GeometricCoefficients.m_kV;
+import static frc.robot.Constants.MotionConstraints.MAX_VELOCITY_METERS_PER_SECOND;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -13,10 +18,10 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 
 public class SwerveModuleClosedLoop {
-    private final double angleOffset;
-    private final TalonFX mAngleMotor;
-    private final TalonFX mDriveMotor;
-    private final CANCoder angleEncoder;
+    private double angleOffset;
+    private TalonFX mAngleMotor;
+    private TalonFX mDriveMotor;
+    private CANCoder angleEncoder;
     private double lastAngle;
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(m_kS, m_kV, m_kA);

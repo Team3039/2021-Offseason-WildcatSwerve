@@ -4,11 +4,11 @@
 
 package frc.robot;
 
-import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -40,11 +40,9 @@ public final class Constants {
     }
 
     public static class MotionConstraints {
-        public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0
-                * SdsModuleConfigurations.MK3_STANDARD.getDriveReduction()
-                * SdsModuleConfigurations.MK3_STANDARD.getWheelDiameter() * Math.PI;
+        public static final double MAX_VELOCITY_METERS_PER_SECOND = 2.5;
         public static final double MIN_VELOCITY_METERS_PER_SECOND = 0;
-
+        
         public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 0;
         public static final double MIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 2.5;
 
@@ -55,18 +53,18 @@ public final class Constants {
     }
 
     public static class GeometricCoefficients {
-        public static final double m_kS = 0 / VoltageConstraints.MAX_VOLTAGE;
-        public static final double m_kV = 0 / VoltageConstraints.MAX_VOLTAGE;
-        public static final double m_kA = 0 / VoltageConstraints.MAX_VOLTAGE;
+        public static final double m_kS = (0.667 / 12); //divide by 12 to convert from volts to percent output for CTRE
+        public static final double m_kV = (2.44 / 12);
+        public static final double m_kA = (0.27 / 12);
 
         public static final double m_diameter = 0;
         public static final double m_circumference = m_diameter * 2 * Math.PI;
 
-        public static final double m_driveGearRatio = 6.86; // 6.86:1
+        public static final double m_driveGearRatio = 6.75; // 6.86:1
         public static final double m_angleGearRatio = 12.8; // 12.8:1
 
-        public static final double DRIVETRAIN_TRACKWIDTH_METERS = 1.0; // FIXME Measure and set trackwidth
-        public static final double DRIVETRAIN_WHEELBASE_METERS = 1.0; // FIXME Measure and set wheelbase
+        public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(22.8); // FIXME Measure and set trackwidth
+        public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(22.8); // FIXME Measure and set wheelbase
     }
 
     public static class MappingPorts {
@@ -121,15 +119,16 @@ public final class Constants {
         public static final double kPYController = 1;
         public static final double kPThetaController = 1;
 
-        public static final double kPDrive = 1;
-        public static final double kIDrive = 1;
-        public static final double kDDrive = 1;
-        public static final double kFDrive = 1;
+        public static final double kPSteer = 0.6;
+        public static final double kISteer = 0.0;
+        public static final double kDSteer = 12.0;
+        public static final double kFSteer = 0.0;
 
-        public static final double kPSteer = 1;
-        public static final double kISteer = 1;
-        public static final double kDSteer = 1;
-        public static final double kFSteer = 1;
+        /* Drive Motor PID Values */
+        public static final double kPDrive = 0.10;
+        public static final double kIDrive = 0.0;
+        public static final double kDDrive = 0.0;
+        public static final double kFDrive = 0.0;
 
         public static final double kPHeading = 0.01;
 
