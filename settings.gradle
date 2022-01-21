@@ -1,27 +1,12 @@
-import org.gradle.internal.os.OperatingSystem
-
 pluginManagement {
-    repositories {
-        mavenLocal()
-        gradlePluginPortal()
-        String frcYear = '2021'
-        File frcHome
-        if (OperatingSystem.current().isWindows()) {
-            String publicFolder = System.getenv('PUBLIC')
-            if (publicFolder == null) {
-                publicFolder = "C:\\Users\\Public"
-            }
-            def homeRoot = new File(publicFolder, "wpilib")
-            frcHome = new File(homeRoot, frcYear)
-        } else {
-            def userFolder = System.getProperty("user.home")
-            def homeRoot = new File(userFolder, "wpilib")
-            frcHome = new File(homeRoot, frcYear)
-        }
-        def frcHomeMaven = new File(frcHome, 'maven')
-        maven {
-            name 'frcHome'
-            url frcHomeMaven
-        }
+    plugins {
+        id "com.github.johnrengelman.shadow" version "5.2.0"
+        id "edu.wpi.first.GradleRIO" version "2020.2.2"
+        id 'net.ltgt.errorprone' version '1.1.1'
     }
 }
+
+rootProject.name = "2020CompetitionRobot"
+
+include ":common"
+include ":common:robot"

@@ -27,43 +27,55 @@
       "isJar": false,
       "skipInvalidPlatforms": true,
       "validPlatforms": [
-        "linuxathena"
+        "linuxathena",
+        "windowsx86-64",
+        "linuxx86-64"
       ]
     },
     {
-      "groupId": "com.ctre.phoenix.sim",
-      "artifactId": "cci-sim",
+      "groupId": "com.ctre.phoenix",
+      "artifactId": "diagnostics",
+      "version": "5.19.4",
+      "isJar": false,
+      "skipInvalidPlatforms": true,
+      "validPlatforms": [
+        "linuxathena",
+        "windowsx86-64",
+        "linuxx86-64"
+      ]
+    },
+    {
+      "groupId": "com.ctre.phoenix",
+      "artifactId": "canutils",
       "version": "5.19.4",
       "isJar": false,
       "skipInvalidPlatforms": true,
       "validPlatforms": [
         "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
+        "linuxx86-64"
       ]
     },
     {
-      "groupId": "com.ctre.phoenix.sim",
-      "artifactId": "simTalonSRX",
+      "groupId": "com.ctre.phoenix",
+      "artifactId": "platform-stub",
       "version": "5.19.4",
       "isJar": false,
       "skipInvalidPlatforms": true,
       "validPlatforms": [
         "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
+        "linuxx86-64"
       ]
     },
     {
-      "groupId": "com.ctre.phoenix.sim",
-      "artifactId": "simVictorSPX",
+      "groupId": "com.ctre.phoenix",
+      "artifactId": "core",
       "version": "5.19.4",
       "isJar": false,
       "skipInvalidPlatforms": true,
       "validPlatforms": [
+        "linuxathena",
         "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
+        "linuxx86-64"
       ]
     }
   ],
@@ -79,8 +91,7 @@
       "binaryPlatforms": [
         "linuxathena",
         "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
+        "linuxx86-64"
       ]
     },
     {
@@ -94,8 +105,7 @@
       "binaryPlatforms": [
         "linuxathena",
         "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
+        "linuxx86-64"
       ]
     },
     {
@@ -107,21 +117,9 @@
       "sharedLibrary": false,
       "skipInvalidPlatforms": true,
       "binaryPlatforms": [
-        "linuxathena"
-      ]
-    },
-    {
-      "groupId": "com.ctre.phoenix.sim",
-      "artifactId": "cci-sim",
-      "version": "5.19.4",
-      "libName": "CTRE_PhoenixCCISim",
-      "headerClassifier": "headers",
-      "sharedLibrary": false,
-      "skipInvalidPlatforms": true,
-      "binaryPlatforms": [
+        "linuxathena",
         "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
+        "linuxx86-64"
       ]
     },
     {
@@ -135,8 +133,7 @@
       "binaryPlatforms": [
         "linuxathena",
         "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
+        "linuxx86-64"
       ]
     },
     {
@@ -149,13 +146,12 @@
       "skipInvalidPlatforms": true,
       "binaryPlatforms": [
         "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
+        "linuxx86-64"
       ]
     },
     {
       "groupId": "com.ctre.phoenix",
-      "artifactId": "platform-sim",
+      "artifactId": "platform-stub",
       "version": "5.19.4",
       "libName": "CTRE_PhoenixPlatform",
       "headerClassifier": "headers",
@@ -163,8 +159,7 @@
       "skipInvalidPlatforms": true,
       "binaryPlatforms": [
         "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
+        "linuxx86-64"
       ]
     },
     {
@@ -178,36 +173,7 @@
       "binaryPlatforms": [
         "linuxathena",
         "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
-      ]
-    },
-    {
-      "groupId": "com.ctre.phoenix.sim",
-      "artifactId": "simTalonSRX",
-      "version": "5.19.4",
-      "libName": "CTRE_SimTalonSRX",
-      "headerClassifier": "headers",
-      "sharedLibrary": true,
-      "skipInvalidPlatforms": true,
-      "binaryPlatforms": [
-        "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
-      ]
-    },
-    {
-      "groupId": "com.ctre.phoenix.sim",
-      "artifactId": "simVictorSPX",
-      "version": "5.19.4",
-      "libName": "CTRE_SimVictorSPX",
-      "headerClassifier": "headers",
-      "sharedLibrary": true,
-      "skipInvalidPlatforms": true,
-      "binaryPlatforms": [
-        "windowsx86-64",
-        "linuxx86-64",
-        "osxx86-64"
+        "linuxx86-64"
       ]
     }
   ]
